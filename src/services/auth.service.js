@@ -31,7 +31,7 @@ class AuthService {
   }
 
   async verifyCode(id, code) {
-    const user = await this.model.findById(id);
+    const user = await this.model.findByfk(id);
     if (!user) {
       throw createError(400, messages.userNotFound);
     }
@@ -44,21 +44,18 @@ class AuthService {
       throw createError(400, messages.invalidCode);
     }
 
-    let userIns = await this.model.findByIdAndUpdate(
-      user._id,
+    let userIns = await this.model.update(
       {
         isVerified: true,
       },
-      {
-        new: true,
-      }
+      { id: user.id }
     );
     return userIns;
   }
 
   async resendCode(id) {
     const user = await this.model.findOne({
-      _id: id,
+      id,
     });
 
     if (!user) {

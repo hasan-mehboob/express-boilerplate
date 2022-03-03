@@ -188,7 +188,6 @@ var text = `declare global {
   var passport: typeof import("passport");
   var passportLocal: typeof import("passport-local");
   var passportJWT: typeof import("passport-jwt");
-  var mongoose: typeof import("mongoose");
   var crypto: typeof import("crypto");
   var JWT: typeof import("jsonwebtoken");
   var bodyParser: typeof import("body-parser");
