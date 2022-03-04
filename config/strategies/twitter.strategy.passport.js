@@ -24,7 +24,9 @@ module.exports = function (passportName, role) {
         try {
           const model = req.roleModel;
           var user = await model.findOne({
-            uId: profile.id,
+            where: {
+              uId: profile.id,
+            },
           });
           if (!user) {
             const firstName = profile.displayName;

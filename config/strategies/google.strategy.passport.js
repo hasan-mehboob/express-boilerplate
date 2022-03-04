@@ -23,7 +23,9 @@ module.exports = function (passportName) {
         try {
           const model = req.roleModel;
           var user = await model.findOne({
-            email: profile.emails[0].value,
+            where: {
+              email: profile.emails[0].value,
+            },
           });
           if (!user) {
             const firstName = profile.displayName

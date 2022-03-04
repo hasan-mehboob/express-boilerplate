@@ -35,7 +35,7 @@ module.exports = function () {
           if (jwt_payload.model && !model) {
             model = roleModel[jwt_payload.model];
           }
-          let user = await model.findById(jwt_payload.id);
+          let user = await model.findByPk(jwt_payload.id);
           user ? done(null, user) : done(customError, false);
         }
       } catch (error) {

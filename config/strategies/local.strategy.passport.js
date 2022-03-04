@@ -13,9 +13,11 @@ module.exports = function () {
       async (req, email, password, done) => {
         try {
           let user = await models.Users.findOne({
-            email: email,
+            where: {
+              email: email,
+            },
           });
-          if (!user || !user.verifyPassword(password)) {
+          if (!user || user.password !== utils.hash.makeHashValue(password)) {
             return done(null, false, { message: messages.invalidLogin });
           }
 

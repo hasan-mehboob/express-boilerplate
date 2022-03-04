@@ -5,23 +5,28 @@ class AuthService {
 
   async signUp(payload) {
     let user = await this.model.findOne({
-      email: payload.email,
+      where: {
+        email: payload.email,
+      },
     });
 
     if (user) {
       throw createError(400, messages.emailExists);
     }
     payload["verificationCode"] = utils.random.generateRandomNumber();
+    payload["password"] = utils.hash.makeHashValue(payload.password);
     user = await this.model.create(payload);
     await libs.email_service.sendEmail(user);
-    var token = user.getJWTToken();
-    user._doc["token"] = token;
+    var token = utils.token.getJWTToken(user);
+    user.dataValues.accessToken = token;
     return user;
   }
 
   async verifyEmail(payload) {
     const user = await this.model.findOne({
-      email: payload.email,
+      where: {
+        email: payload.email,
+      },
     });
 
     if (!user) {
@@ -31,7 +36,7 @@ class AuthService {
   }
 
   async verifyCode(id, code) {
-    const user = await this.model.findByfk(id);
+    const user = await this.model.findByPk(id);
     if (!user) {
       throw createError(400, messages.userNotFound);
     }
@@ -48,22 +53,24 @@ class AuthService {
       {
         isVerified: true,
       },
-      { id: user.id }
+      {
+        where: {
+          id: user.id,
+        },
+      }
     );
     return userIns;
   }
 
   async resendCode(id) {
     const user = await this.model.findOne({
-      id,
+      where: {
+        id,
+      },
     });
 
     if (!user) {
       throw createError(400, messages.userNotFound);
-    }
-
-    if (user.isVerified) {
-      throw createError(400, messages.alreadyVerified);
     }
 
     await libs.email_service.sendEmail(user);

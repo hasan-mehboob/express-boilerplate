@@ -8,9 +8,7 @@ class CrudService {
   }
 
   async update(payload, id, message) {
-    let model = await this.model.findByIdAndUpdate(id, payload, {
-      new: true,
-    });
+    let model = await this.model.update({ payload }, { where: { id } });
     if (!model) {
       throw createError(404, message);
     }
@@ -18,7 +16,7 @@ class CrudService {
   }
 
   async getModelById(id, notFoundMessage) {
-    let model = await this.model.findById(id);
+    let model = await this.model.findByPk(id);
 
     if (!model) {
       throw createError(404, notFoundMessage);
@@ -33,7 +31,7 @@ class CrudService {
     return await this.model.find({});
   }
   async deleteById(id) {
-    return await this.model.findByIdAndDelete(id);
+    return await this.model.delete({ where: { id } });
   }
 }
 exports.CrudService = CrudService;

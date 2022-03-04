@@ -32,10 +32,12 @@ module.exports = function (passportName) {
       },
       async (req, accessToken, refreshToken, profile, done) => {
         try {
-          const model = req.roleModel ? req.roleModel : req.roleModel;
+          const model = req.roleModel;
 
           var user = await model.findOne({
-            uId: profile.id,
+            where: {
+              uId: profile.id,
+            },
           });
           if (!user) {
             user = await model.create({

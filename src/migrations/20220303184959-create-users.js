@@ -15,7 +15,6 @@ module.exports = {
       email: { type: Sequelize.STRING },
       password: {
         type: Sequelize.STRING,
-        set: (val) => utils.hash.makeHashValue(val),
       },
       profilePhoto: {
         type: Sequelize.STRING,

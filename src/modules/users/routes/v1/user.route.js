@@ -21,7 +21,6 @@ router
 
   .post(
     "/users/auth/verify-code/:id",
-    middlewares.id_validation.validateId,
     validators.users.verifyCodePayloadValidation,
     middlewares.validation.request,
     actions.users.auth.verifyCode
@@ -40,7 +39,6 @@ router
   )
   .patch(
     "/users/auth/reset-password/:id",
-    middlewares.id_validation.validateId,
     validators.users.resetPasswordPayload,
     middlewares.validation.request,
     actions.users.auth.resetPassword
