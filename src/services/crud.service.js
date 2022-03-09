@@ -14,6 +14,32 @@ class CrudService {
     }
     return model;
   }
+  async updateVerification({ isEmail, id, message }) {
+    const verificationCode = utils.random.generateRandomNumber();
+    const codeExpiryTime = Date.now();
+    let model = await this.model.update(
+      {
+        ...(isEmail
+          ? {
+              "verificationCode.email": verificationCode,
+              "codeExpiryTime.email": codeExpiryTime,
+            }
+          : {
+              "verificationCode.telephoneNumber": verificationCode,
+              "codeExpiryTime.telephoneNumber": codeExpiryTime,
+            }),
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    if (!model) {
+      throw createError(404, message);
+    }
+    return model;
+  }
 
   async getModelById(id, notFoundMessage) {
     let model = await this.model.findByPk(id);

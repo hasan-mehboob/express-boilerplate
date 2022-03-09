@@ -38,6 +38,7 @@ module.exports = {
     return `Please provide valid ${val}!`;
   },
   emailExists: "Email already exists!",
+  telephoneNumberExists: "Mobile phone number already exists!",
   sessionExpiry: "Session has been expired!",
   updateAttr: (attr) => {
     return `${attr} has been updated successfully!`;

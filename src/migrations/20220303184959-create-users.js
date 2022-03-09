@@ -12,27 +12,48 @@ module.exports = {
         type: Sequelize.STRING,
       },
       lastName: { type: Sequelize.STRING },
+      fullName: { type: Sequelize.STRING },
       email: { type: Sequelize.STRING },
+      gender: { type: Sequelize.ENUM("male", "female") },
       password: {
         type: Sequelize.STRING,
       },
       profilePhoto: {
         type: Sequelize.STRING,
-        default: "",
+        defaultValue: "",
       },
       telephoneNumber: Sequelize.STRING,
+      dob: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      meritalStatus: {
+        type: Sequelize.ENUM("single", "married", "divorced"),
+      },
+      noOfChildern: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      zipCode: Sequelize.INTEGER,
+      state: Sequelize.STRING,
+      city: Sequelize.STRING,
+      country: Sequelize.STRING,
+      street: Sequelize.STRING,
       accessToken: {
         type: Sequelize.STRING,
-        default: "",
+        defaultValue: "",
       },
       verificationCode: {
-        type: Sequelize.INTEGER,
-        default: 0,
+        type: Sequelize.JSONB(),
+        // set(value) {
+        //   this.setDataValue("verificationCode", JSON.stringify(value));
+        // },
+        defaultValue: { email: null, telephoneNumber: null },
       },
-      codeExpiryTime: { type: Sequelize.DATE },
+      codeExpiryTime: { type: Sequelize.JSONB() },
       isVerified: {
-        type: Sequelize.BOOLEAN,
-        default: false,
+        type: Sequelize.JSONB(),
+        defaultValue: { email: false, telephoneNumber: false },
       },
 
       createdAt: {

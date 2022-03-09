@@ -195,6 +195,7 @@ var text = `declare global {
   var expressValidator: typeof import("express-validator");
   var sgMail: typeof import("@sendgrid/mail");
   var util: typeof import("util");
+  var Op: typeof import("sequelize").Op;
   
   //MIDDLEWARES
   var middlewares: ${convertToCode(types.middlewares)};

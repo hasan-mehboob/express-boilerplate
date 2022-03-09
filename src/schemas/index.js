@@ -11,7 +11,10 @@ let sequelize;
       config.database,
       config.username,
       config.password,
-      config
+      config,
+      {
+        logging: true,
+      }
     );
     console.log("Connected to  database") + process.env.NODE_ENV;
   } catch (error) {

@@ -15,6 +15,7 @@ global.passport = require("passport");
 global.passportLocal = require("passport-local");
 global.passportJWT = require("passport-jwt");
 global.Sequelize = require("sequelize");
+global.Op = require("sequelize").Op;
 global.crypto = require("crypto");
 global.JWT = require("jsonwebtoken");
 global.bodyParser = require("body-parser");

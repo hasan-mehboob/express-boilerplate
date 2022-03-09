@@ -14,7 +14,7 @@ router
   )
   .post(
     "/users/auth/verifyEmail",
-    validators.users.emailPayloadValidation,
+    validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
     actions.users.auth.verifyEmail
   )
@@ -33,7 +33,7 @@ router
   )
   .patch(
     "/users/auth/forgot-password",
-    validators.users.emailPayloadValidation,
+    validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
     actions.users.auth.forgotPassword
   )

@@ -47,13 +47,14 @@ exports.auth = {
 
   verifyCode: async (req, res, next) => {
     try {
-      const id = req.params.id;
-      const code = parseInt(req.body.code);
+      let {
+        body: { userName, code },
+        params: { id },
+      } = req;
+      code = parseInt(req.body.code);
+      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
 
-      let user = await authService.verifyCode(id, code);
-      if (!user.isVerified) {
-        throw createError(400, messages.notVerified);
-      }
+      let user = await authService.verifyCode(id, code, isEmail);
       return res.json({
         status: 200,
         message: messages.verified,
@@ -66,8 +67,12 @@ exports.auth = {
 
   resendCode: async (req, res, next) => {
     try {
-      const id = req.params.id;
-      let user = await authService.resendCode(id);
+      const {
+        body: { userName },
+        params: { id },
+      } = req;
+      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
+      let user = await authService.resendCode(id, isEmail, crudService);
 
       return res.json({
         status: 200,
@@ -82,15 +87,14 @@ exports.auth = {
     try {
       let { body: payload } = req;
       let user = await authService.verifyEmail(payload);
-      const verificationCode = utils.random.generateRandomNumber();
-      const codeExpiryTime = Date.now();
-      user = await crudService.update(
-        { verificationCode, codeExpiryTime },
-        user.id,
-        messages.userNotFound
-      );
+      const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
+      user = await crudService.updateVerification({
+        isEmail,
+        id: user.id,
+        message: messages.userNotFound,
+      });
+      // FIXME: send email and phoneNumber
       await libs.email_service.sendEmail(user);
-      // await AuthNotificationService.forgotPassword(user, "Client", "email");
       user.token = utils.token.getJWTToken(user);
       return res.json({
         status: 200,
@@ -104,7 +108,7 @@ exports.auth = {
   resetPassword: async (req, res, next) => {
     try {
       const {
-        body: { code, password },
+        body: { code, password, userName },
         params: { id },
       } = req;
       const verificationCode = parseInt(code);
@@ -112,6 +116,7 @@ exports.auth = {
       if (!user) {
         throw createError(400, messages.userNotFound);
       }
+      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
       const currentTime = Date.now();
       // It will be empty when no request had been made for resetPassword
       if (!user.codeExpiryTime) {
@@ -120,7 +125,11 @@ exports.auth = {
       if (currentTime - user.codeExpiryTime > dataConstraint.CODE_EXPIRY_TIME) {
         throw createError(400, messages.codeExpried);
       }
-      if (user.verificationCode !== verificationCode) {
+      const verificationPayload = isEmail
+        ? user.emailVerificationCode
+        : user.phoneVerificationCode;
+      // FIXME: Remove hard coded value
+      if (verificationPayload !== verificationCode || verificationCode !== 0) {
         throw createError(400, messages.invalidCode);
       }
       user = await crudService.update(

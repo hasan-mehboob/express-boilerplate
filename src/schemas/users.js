@@ -21,21 +21,21 @@ module.exports = (sequelize, DataTypes) => {
       },
       profilePhoto: {
         type: DataTypes.STRING,
-        default: "",
+        defaultValue: "",
       },
       telephoneNumber: DataTypes.STRING,
       accessToken: {
         type: DataTypes.STRING,
-        default: "",
+        defaultValue: "",
       },
       verificationCode: {
-        type: DataTypes.INTEGER,
-        default: 0,
+        type: DataTypes.JSONB(),
+        defaultValue: { email: null, telephoneNumber: null },
       },
-      codeExpiryTime: { type: DataTypes.DATE },
+      codeExpiryTime: { type: DataTypes.JSONB() },
       isVerified: {
-        type: DataTypes.BOOLEAN,
-        default: false,
+        type: DataTypes.JSONB(),
+        defaultValue: { email: false, telephoneNumber: false },
       },
     },
     {
