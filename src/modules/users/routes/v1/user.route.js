@@ -5,20 +5,24 @@ router
     middlewares.validation.request,
     actions.users.auth.signUp
   )
-  .post(
+  .get(
     "/users/auth/login",
     validators.users.signInPayloadValidation,
     middlewares.validation.request,
     middlewares.local_passport.authenticate,
     actions.users.auth.signIn
   )
-  .post(
-    "/users/auth/verifyEmail",
-    validators.users.forgotPasswordPayloadValidation,
-    middlewares.validation.request,
-    actions.users.auth.verifyEmail
+  .get(
+    "/users/auth/google",
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+    })
   )
-
+  .get(
+    "/users/auth/google/callback",
+    passport.authenticate("google", { session: false }),
+    actions.users.auth.googleCb
+  )
   .post(
     "/users/auth/verify-code/:id",
     validators.users.verifyCodePayloadValidation,
@@ -33,6 +37,12 @@ router
   )
   .patch(
     "/users/auth/forgot-password",
+    validators.users.forgotPasswordPayloadValidation,
+    middlewares.validation.request,
+    actions.users.auth.forgotPassword
+  )
+  .patch(
+    "/users/auth/verify-account",
     validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
     actions.users.auth.forgotPassword

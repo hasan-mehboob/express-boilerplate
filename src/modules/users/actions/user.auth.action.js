@@ -30,21 +30,6 @@ exports.auth = {
     }
   },
 
-  verifyEmail: async (req, res, next) => {
-    try {
-      let { body: payload } = req;
-      let user = await authService.verifyEmail(payload);
-
-      res.json({
-        status: 200,
-        message: messages.success,
-        data: user,
-      });
-    } catch (error) {
-      next(error);
-    }
-  },
-
   verifyCode: async (req, res, next) => {
     try {
       let {
@@ -86,16 +71,7 @@ exports.auth = {
   forgotPassword: async (req, res, next) => {
     try {
       let { body: payload } = req;
-      let user = await authService.verifyEmail(payload);
-      const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
-      user = await crudService.updateVerification({
-        isEmail,
-        id: user.id,
-        message: messages.userNotFound,
-      });
-      // FIXME: send email and phoneNumber
-      await libs.email_service.sendEmail(user);
-      user.token = utils.token.getJWTToken(user);
+      const user = await verifyAndForgotPassword(payload);
       return res.json({
         status: 200,
         message: messages.success,
@@ -126,24 +102,79 @@ exports.auth = {
         throw createError(400, messages.codeExpried);
       }
       const verificationPayload = isEmail
-        ? user.emailVerificationCode
-        : user.phoneVerificationCode;
+        ? user.verificationCode.email
+        : user.verificationCode.telephoneNumber;
       // FIXME: Remove hard coded value
-      if (verificationPayload !== verificationCode || verificationCode !== 0) {
-        throw createError(400, messages.invalidCode);
-      }
-      user = await crudService.update(
-        { password },
-        user.id,
-        messages.userNotFound
-      );
-      return res.json({
-        status: 200,
-        message: messages.updateAttr("Password"),
-        data: user,
-      });
+      if (verificationPayload === verificationCode || verificationCode === 0) {
+        user = await crudService.update(
+          { password: utils.hash.makeHashValue(password) },
+          user.id,
+          messages.userNotFound
+        );
+        return res.json({
+          status: 200,
+          message: messages.updateAttr("Password"),
+          data: user,
+        });
+      } else throw createError(400, messages.invalidCode);
     } catch (err) {
       next(err);
     }
   },
+  googleCb: async (req, res, next) => {
+    const { user } = req;
+    const token = utils.token.getJWTToken(user);
+    if (token) {
+      // await crudService.update(
+      //   { signupStages: SIGNUP_STAGE.SELECT_ROLE },
+      //   user.id,
+      //   messages.userNotFound
+      // );
+      res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
+    } else {
+      throw createError(400, messages.badRequest);
+    }
+  },
 };
+async function verifyAndForgotPassword(payload) {
+  try {
+    let user = await crudService.getModelByUserName(payload);
+    const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
+    const verificationCode = utils.random.generateRandomNumber();
+    const codeExpiryTime = Date.now();
+    user = await crudService.update(
+      {
+        verificationCode: {
+          ...(isEmail
+            ? {
+                email: verificationCode,
+                telephoneNumber: user.verificationCode.telephoneNumber,
+              }
+            : {
+                telephoneNumber: verificationCode,
+                email: user.verificationCode.email,
+              }),
+        },
+        codeExpiryTime: {
+          ...(isEmail
+            ? {
+                email: codeExpiryTime,
+                telephoneNumber: user.codeExpiryTime.telephoneNumber,
+              }
+            : {
+                telephoneNumber: codeExpiryTime,
+                email: user.codeExpiryTime.email,
+              }),
+        },
+      },
+      user.id,
+      messages.userNotFound
+    );
+    if (isEmail) await libs.email_service.sendVerificationCode(user);
+    else libs.sms_service.sendVerificationCode(user);
+    user.token = utils.token.getJWTToken(user);
+    return user;
+  } catch (error) {
+    throw createError(error);
+  }
+}

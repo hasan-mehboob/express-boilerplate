@@ -20,6 +20,7 @@ global.crypto = require("crypto");
 global.JWT = require("jsonwebtoken");
 global.bodyParser = require("body-parser");
 global.cors = require("cors");
+global.twilio = require("twilio");
 global.sgMail = require("@sendgrid/mail");
 global.fs = require("fs");
 global.expressValidator = require("express-validator");

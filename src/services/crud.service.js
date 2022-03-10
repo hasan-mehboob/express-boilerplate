@@ -8,7 +8,7 @@ class CrudService {
   }
 
   async update(payload, id, message) {
-    let model = await this.model.update({ payload }, { where: { id } });
+    let model = await this.model.update({ ...payload }, { where: { id } });
     if (!model) {
       throw createError(404, message);
     }
@@ -48,6 +48,25 @@ class CrudService {
       throw createError(404, notFoundMessage);
     }
     return model;
+  }
+  async getModelByUserName(payload) {
+    const user = await this.model.findOne({
+      where: {
+        [Op.or]: [
+          {
+            email: payload.user,
+          },
+          {
+            telephoneNumber: payload.user,
+          },
+        ],
+      },
+    });
+
+    if (!user) {
+      throw createError(400, messages.userNotFound);
+    }
+    return user;
   }
 
   async getList(attr) {
