@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       profilePhoto: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(500),
         defaultValue: "",
       },
       telephoneNumber: Sequelize.STRING,
@@ -45,9 +45,6 @@ module.exports = {
       },
       verificationCode: {
         type: Sequelize.JSONB(),
-        // set(value) {
-        //   this.setDataValue("verificationCode", JSON.stringify(value));
-        // },
         defaultValue: { email: null, telephoneNumber: null },
       },
       codeExpiryTime: { type: Sequelize.JSONB() },
@@ -55,7 +52,14 @@ module.exports = {
         type: Sequelize.JSONB(),
         defaultValue: { email: false, telephoneNumber: false },
       },
-
+      transport: {
+        type: Sequelize.STRING,
+        defaultValue: "local",
+      },
+      transportUid: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

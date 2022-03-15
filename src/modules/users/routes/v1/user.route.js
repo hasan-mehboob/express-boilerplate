@@ -23,6 +23,15 @@ router
     passport.authenticate("google", { session: false }),
     actions.users.auth.googleCb
   )
+  .get(
+    "/users/auth/facebook",
+    passport.authorize("facebook", { scope: ["email"] })
+  )
+    .get(
+    "/users/auth/facebook/callback",
+    passport.authenticate("facebook", { session: false }),
+    actions.users.auth.facebookCb
+  )
   .post(
     "/users/auth/verify-code/:id",
     validators.users.verifyCodePayloadValidation,

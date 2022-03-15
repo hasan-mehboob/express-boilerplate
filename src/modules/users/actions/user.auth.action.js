@@ -135,6 +135,16 @@ exports.auth = {
       throw createError(400, messages.badRequest);
     }
   },
+  facebookCb: async (req, res, next) => {
+    const { user } = req;
+    const token = utils.token.getJWTToken(user);
+
+    if (token) {
+      res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
+    } else {
+      throw createError(400, messages.badRequest);
+    }
+  },
 };
 async function verifyAndForgotPassword(payload) {
   try {

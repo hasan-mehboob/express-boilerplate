@@ -36,14 +36,15 @@ module.exports = function (passportName) {
 
           var user = await model.findOne({
             where: {
-              uId: profile.id,
+              transportUid: profile.id,
             },
           });
           if (!user) {
             user = await model.create({
               firstName: profile.name.givenName,
               lastName: profile.name.familyName,
-              uId: profile.id,
+              fullName: `${profile.name.givenName} ${profile.name.familyName}`,
+              transportUid: profile.id,
               provider: profile.provider,
               accessToken: accessToken,
               email: profile.emails[0].value,
