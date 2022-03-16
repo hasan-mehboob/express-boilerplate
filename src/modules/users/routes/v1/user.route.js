@@ -12,6 +12,12 @@ router
     middlewares.local_passport.authenticate,
     actions.users.auth.signIn
   )
+  .patch(
+    "/users/update",
+    validators.users.updatePayloadValidation,
+    middlewares.validation.request,
+    actions.users.update.updateUser
+  )
   .get(
     "/users/auth/google",
     passport.authenticate("google", {
@@ -27,7 +33,7 @@ router
     "/users/auth/facebook",
     passport.authorize("facebook", { scope: ["email"] })
   )
-    .get(
+  .get(
     "/users/auth/facebook/callback",
     passport.authenticate("facebook", { session: false }),
     actions.users.auth.facebookCb

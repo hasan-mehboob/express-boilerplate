@@ -71,7 +71,9 @@ exports.auth = {
   forgotPassword: async (req, res, next) => {
     try {
       let { body: payload } = req;
-      const user = await verifyAndForgotPassword(payload);
+      let user = await crudService.getModelByUserName(payload);
+      const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
+      user = await authService.verification({ isEmail, user, crudService });
       return res.json({
         status: 200,
         message: messages.success,
@@ -146,45 +148,3 @@ exports.auth = {
     }
   },
 };
-async function verifyAndForgotPassword(payload) {
-  try {
-    let user = await crudService.getModelByUserName(payload);
-    const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
-    const verificationCode = utils.random.generateRandomNumber();
-    const codeExpiryTime = Date.now();
-    user = await crudService.update(
-      {
-        verificationCode: {
-          ...(isEmail
-            ? {
-                email: verificationCode,
-                telephoneNumber: user.verificationCode.telephoneNumber,
-              }
-            : {
-                telephoneNumber: verificationCode,
-                email: user.verificationCode.email,
-              }),
-        },
-        codeExpiryTime: {
-          ...(isEmail
-            ? {
-                email: codeExpiryTime,
-                telephoneNumber: user.codeExpiryTime.telephoneNumber,
-              }
-            : {
-                telephoneNumber: codeExpiryTime,
-                email: user.codeExpiryTime.email,
-              }),
-        },
-      },
-      user.id,
-      messages.userNotFound
-    );
-    if (isEmail) await libs.email_service.sendVerificationCode(user);
-    else libs.sms_service.sendVerificationCode(user);
-    user.token = utils.token.getJWTToken(user);
-    return user;
-  } catch (error) {
-    throw createError(error);
-  }
-}

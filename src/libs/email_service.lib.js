@@ -5,7 +5,7 @@ sgMail.setApiKey(SENDGRID_APIKEY);
 async function sendEmail(data) {
   const msg = {
     from: data.from,
-    to: data.email,
+    to: data.to,
     subject: data.subject,
     html: data.body,
   };
@@ -14,13 +14,13 @@ async function sendEmail(data) {
   });
   console.log(sgResp);
 }
-exports.sendVerificationCode = async function (user) {
+exports.sendVerificationCode = async function (user, verificationCode) {
   const data = {
     to: user.email,
     from: EMAIL_FROM,
     subject: "Subject",
     text: "verification code",
-    html: "Your verification code is " + user.verificationCode,
+    html: "Your verification code is " + verificationCode,
   };
   await sendEmail(data);
 };

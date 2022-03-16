@@ -23,6 +23,7 @@ module.exports = {
         defaultValue: "",
       },
       telephoneNumber: Sequelize.STRING,
+      countryCode: Sequelize.INTEGER,
       dob: {
         type: Sequelize.DATE,
         allowNull: true,

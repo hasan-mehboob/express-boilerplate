@@ -70,42 +70,62 @@ class AuthService {
         id,
       },
     });
-    const verificationCode = utils.random.generateRandomNumber();
-    const codeExpiryTime = Date.now();
-    user = await crudService.update(
-      {
-        verificationCode: {
-          ...(isEmail
-            ? {
-                email: verificationCode,
-                telephoneNumber: user.verificationCode.telephoneNumber,
-              }
-            : {
-                telephoneNumber: verificationCode,
-                email: user.verificationCode.email,
-              }),
-        },
-        codeExpiryTime: {
-          ...(isEmail
-            ? {
-                email: codeExpiryTime,
-                telephoneNumber: user.codeExpiryTime.telephoneNumber,
-              }
-            : {
-                telephoneNumber: codeExpiryTime,
-                email: user.codeExpiryTime.email,
-              }),
-        },
-      },
-      id,
-      messages.userNotFound
-    );
-    if (!user) {
-      throw createError(400, messages.userNotFound);
-    }
-    if (isEmail) await libs.email_service.sendVerificationCode(user);
-    else libs.sms_service.sendVerificationCode(user);
+    if (!user) return createError(messages.userNotFound);
+    user = await this.verification({ isEmail, user, crudService });
     return user;
+  }
+  async verification({ isEmail, user, crudService }) {
+    try {
+      const verificationCode = utils.random.generateRandomNumber();
+      const codeExpiryTime = Date.now();
+      await crudService.update(
+        {
+          verificationCode: {
+            ...(isEmail
+              ? {
+                  email: verificationCode,
+                  telephoneNumber: user?.verificationCode?.telephoneNumber,
+                }
+              : {
+                  telephoneNumber: verificationCode,
+                  email: user?.verificationCode?.email,
+                }),
+          },
+          codeExpiryTime: {
+            ...(isEmail
+              ? {
+                  email: codeExpiryTime,
+                  telephoneNumber: user?.codeExpiryTime?.telephoneNumber,
+                }
+              : {
+                  telephoneNumber: codeExpiryTime,
+                  email: user?.codeExpiryTime?.email,
+                }),
+          },
+        },
+        user.id,
+        messages.userNotFound
+      );
+      const userData = await models.Users.findByPk(user.id);
+      if (isEmail)
+        await libs.email_service.sendVerificationCode(
+          userData,
+          isEmail
+            ? userData.verificationCode.email
+            : userData.verificationCode.telephoneNumber
+        );
+      else
+        libs.sms_service.sendVerificationCode(
+          userData,
+          isEmail
+            ? userData.verificationCode.email
+            : userData.verificationCode.telephoneNumber
+        );
+      userData.token = utils.token.getJWTToken(userData);
+      return userData;
+    } catch (error) {
+      throw createError(error);
+    }
   }
 }
 

@@ -20,10 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       profilePhoto: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(500),
         defaultValue: "",
       },
       telephoneNumber: DataTypes.STRING,
+      countryCode: DataTypes.INTEGER,
       accessToken: {
         type: DataTypes.STRING,
         defaultValue: "",
