@@ -8,7 +8,8 @@
   "repository": "git@github.com:frizhub-repo/express-boilerplate.git",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./bootstrap.js",
+    "start": "node ./bootstrap.js",
+    "dev": "nodemon ./bootstrap.js",
     "sequelize": "sequelize",
     "migrate:dev": "sequelize db:migrate --env development",
     "migrate:prod": "sequelize db:migrate --env production",
