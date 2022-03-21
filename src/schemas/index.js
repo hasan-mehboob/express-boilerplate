@@ -8,10 +8,9 @@ let sequelize;
 (async () => {
   try {
     sequelize = new Sequelize(
-      config.database,
-      config.username,
-      config.password,
-      config,
+      env === "production"
+        ? process.env.DATABASE_URL
+        : process.env.TEST_DATABASE_URL,
       {
         logging: true,
       }
