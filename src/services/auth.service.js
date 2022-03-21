@@ -27,7 +27,10 @@ class AuthService {
     };
     payload["password"] = utils.hash.makeHashValue(payload.password);
     user = await this.model.create(payload);
-    await libs.email_service.sendVerificationCode(user);
+    await libs.email_service.sendVerificationCode(
+      user,
+      user.verificationCode.email
+    );
     var token = utils.token.getJWTToken(user);
     user.dataValues.accessToken = token;
     return user;
