@@ -10,6 +10,10 @@ exports.createNewsLetter = async (req, res, next) => {
     const newsLetter = await models.NewsLetters.create({
       email: payload.email,
     });
+    // FIXME: change comming soom lead
+    libs.email_service.commingSoonLeads({
+      email: payload.email,
+    });
     return res.json({
       status: 200,
       message: messages.created("NewsLetter"),
