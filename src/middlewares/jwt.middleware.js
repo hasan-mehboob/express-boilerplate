@@ -9,6 +9,10 @@ router.use(function (req, res, next) {
       isChecked = 1;
     }
   }
+  if (req.path.search("/public") > -1) {
+    next();
+    return;
+  }
   if (req.path.search("/login") > -1) {
     next();
   } else {
