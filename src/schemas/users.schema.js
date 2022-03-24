@@ -25,10 +25,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       telephoneNumber: DataTypes.STRING,
       countryCode: DataTypes.INTEGER,
-      accessToken: {
-        type: DataTypes.STRING,
-        defaultValue: "",
-      },
       verificationCode: {
         type: DataTypes.JSONB(),
         defaultValue: { email: null, telephoneNumber: null },
@@ -37,6 +33,9 @@ module.exports = (sequelize, DataTypes) => {
       isVerified: {
         type: DataTypes.JSONB(),
         defaultValue: { email: false, telephoneNumber: false },
+      },
+      fcmToken: {
+        type: DataTypes.STRING,
       },
     },
     {

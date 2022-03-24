@@ -15,7 +15,8 @@
     "migrate:prod": "sequelize db:migrate --env production",
     "model:generate": "sequelize model:generate",
     "migrate:undo": "sequelize db:migrate:undo",
-    "migrate:undo:all": "sequelize db:migrate:undo:all"
+    "migrate:undo:all": "sequelize db:migrate:undo:all",
+    "migrate:undo:all:prod": "sequelize db:migrate:undo:all --env production"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.4.0",
