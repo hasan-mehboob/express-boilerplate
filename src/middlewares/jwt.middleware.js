@@ -9,17 +9,6 @@ router.use(function (req, res, next) {
       isChecked = 1;
     }
   }
-  // if (req.path.search("/public") > -1) {
-  //   next();
-  //   return;
-  // }
-  // if (req.path.search("/login") > -1) {
-  //   next();
-  // } else {
-  //   if (req.path.search("auth/") > -1) {
-  //     next();
-  //     return;
-  //   }
 
   passport.authenticate("jwt", { session: false }, function (err, user, info) {
     if (err || !user) {

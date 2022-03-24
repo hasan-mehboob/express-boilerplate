@@ -9,9 +9,6 @@ module.exports = {
   updatedModel: (model) => {
     return `${model} has been updated successfully!`;
   },
-  getAllModel: (name) => {
-    return `${name} fetch successfully`;
-  },
   userExists: "This user already exists!",
   invalidPayload: "Invalid payload",
   userNotFound: "Couldn't find your Account",

@@ -5,7 +5,7 @@ exports.get = {
         await models.NewsLetterSubscribers.findAll();
       return res.json({
         status: 200,
-        message: messages.getAllModel("NewsLetterSubscribers"),
+        message: messages.success,
         data: NewsLetterSubscribers,
       });
     } catch (error) {
