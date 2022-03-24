@@ -153,11 +153,15 @@ let signInPayloadValidation = [
     .withMessage(messages.invalidDataType("String")),
 ];
 let forgotPasswordPayloadValidation = [
-  body("user")
+  body("userName")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()
     .withMessage(messages.notEmpty),
+  body("countryCode")
+    .isNumeric()
+    .withMessage(messages.invalidDataType("Number"))
+    .optional(),
 ];
 
 let resetPasswordPayload = [

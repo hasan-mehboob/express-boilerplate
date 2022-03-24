@@ -14,10 +14,13 @@ class AuthService {
     });
     if (user && user.email === payload.email) {
       throw createError(400, messages.emailExists);
-    } else if (user && user.telephoneNumber === payload.telephoneNumber) {
+    } else if (
+      user &&
+      user.telephoneNumber === payload.telephoneNumber &&
+      user.countryCode === payload.countryCode
+    ) {
       throw createError(400, messages.telephoneNumberExists);
     }
-    // payload.verificationCode.email = utils.random.generateRandomNumber();
     payload = {
       ...payload,
       verificationCode: {

@@ -33,11 +33,10 @@ exports.auth = {
   verifyCode: async (req, res, next) => {
     try {
       let {
-        body: { userName, code },
+        body: { code, isEmail },
         params: { id },
       } = req;
       code = parseInt(req.body.code);
-      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
 
       let user = await authService.verifyCode(id, code, isEmail);
       return res.json({
@@ -53,10 +52,9 @@ exports.auth = {
   resendCode: async (req, res, next) => {
     try {
       const {
-        body: { userName },
+        body: { isEmail },
         params: { id },
       } = req;
-      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
       let user = await authService.resendCode(id, isEmail, crudService);
 
       return res.json({
@@ -72,8 +70,11 @@ exports.auth = {
     try {
       let { body: payload } = req;
       let user = await crudService.getModelByUserName(payload);
-      const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
-      user = await authService.verification({ isEmail, user, crudService });
+      user = await authService.verification({
+        isEmail: payload.isEmail,
+        user,
+        crudService,
+      });
       return res.json({
         status: 200,
         message: messages.success,
@@ -86,7 +87,7 @@ exports.auth = {
   resetPassword: async (req, res, next) => {
     try {
       const {
-        body: { code, password, userName },
+        body: { code, password, isEmail },
         params: { id },
       } = req;
       const verificationCode = parseInt(code);
@@ -94,7 +95,6 @@ exports.auth = {
       if (!user) {
         throw createError(400, messages.userNotFound);
       }
-      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
       const currentTime = Date.now();
       // It will be empty when no request had been made for resetPassword
       if (!user.codeExpiryTime) {

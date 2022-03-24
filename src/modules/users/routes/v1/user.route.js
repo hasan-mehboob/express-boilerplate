@@ -3,18 +3,21 @@ router
     "/users/auth/signUp",
     validators.users.signUpPayloadValidation,
     middlewares.validation.request,
+    middlewares.email_format.format,
     actions.users.auth.signUp
   )
   .get(
     "/users/auth/login",
     validators.users.signInPayloadValidation,
     middlewares.validation.request,
+    middlewares.email_format.format,
     middlewares.local_passport.authenticate,
     actions.users.auth.signIn
   )
   .patch(
     "/users/update",
     validators.users.updatePayloadValidation,
+    middlewares.email_format.format,
     middlewares.validation.request,
     actions.users.update.updateUser
   )
@@ -42,30 +45,35 @@ router
     "/users/auth/verify-code/:id",
     validators.users.verifyCodePayloadValidation,
     middlewares.validation.request,
+    middlewares.email_format.format,
     actions.users.auth.verifyCode
   )
   .post(
     "/users/auth/resend-code/:id",
     validators.users.resendCodePayloadValidation,
     middlewares.validation.request,
+    middlewares.email_format.format,
     actions.users.auth.resendCode
   )
   .patch(
     "/users/auth/forgot-password",
     validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
+    middlewares.email_format.format,
     actions.users.auth.forgotPassword
   )
   .patch(
     "/users/auth/verify-account",
     validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
+    middlewares.email_format.format,
     actions.users.auth.forgotPassword
   )
   .patch(
     "/users/auth/reset-password/:id",
     validators.users.resetPasswordPayload,
     middlewares.validation.request,
+    middlewares.email_format.format,
     actions.users.auth.resetPassword
   );
 
