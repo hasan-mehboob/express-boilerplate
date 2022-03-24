@@ -40,10 +40,6 @@ module.exports = {
       city: Sequelize.STRING,
       country: Sequelize.STRING,
       street: Sequelize.STRING,
-      accessToken: {
-        type: Sequelize.STRING,
-        defaultValue: "",
-      },
       verificationCode: {
         type: Sequelize.JSONB(),
         defaultValue: { email: null, telephoneNumber: null },
@@ -53,13 +49,8 @@ module.exports = {
         type: Sequelize.JSONB(),
         defaultValue: { email: false, telephoneNumber: false },
       },
-      transport: {
+      fcmToken: {
         type: Sequelize.STRING,
-        defaultValue: "local",
-      },
-      transportUid: {
-        type: Sequelize.STRING,
-        allowNull: true,
       },
       createdAt: {
         allowNull: false,

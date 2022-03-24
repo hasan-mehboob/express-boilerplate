@@ -42,9 +42,12 @@ let types = {
 
 // SCHEMA
 for (let schemaFile of utils.globalFile.getGlobbedFiles("./**/*.schema.js")) {
-  const schema = require(path.resolve(`${schemaFile}`));
+  const schema = require(path.resolve(`${schemaFile}`))(
+    models.sequelize,
+    models.Sequelize.DataTypes
+  );
   schema &&
-    (types["models"][schema.modelName] = `typeof import("${schemaFile.replace(
+    (types["models"][schema.tableName] = `typeof import("${schemaFile.replace(
       ".js",
       ""
     )}")`);
@@ -217,6 +220,7 @@ var text = `declare global {
   var helpers: ${convertToCode(types.helpers)};
   
   var messages: typeof import("./config/messages");
+  var emailConstraints: typeof import("./config/emailConstraints");
   var dataConstraint: typeof import("./config/data_constraints");
   var emailConstraints: typeof import("./config/emailConstraints");
   var constants: typeof import("./config/constants");
