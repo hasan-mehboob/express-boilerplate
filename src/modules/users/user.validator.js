@@ -134,6 +134,12 @@ let updatePayloadValidation = [
     .withMessage(messages.invalidDataType("String"))
     .isIn(["single", "married", "divorced"])
     .optional(),
+  body("password")
+    .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
+    .withMessage(messages.invalidLength)
+    .isString()
+    .withMessage(messages.invalidDataType("String"))
+    .optional(),
 ];
 
 let signInPayloadValidation = [

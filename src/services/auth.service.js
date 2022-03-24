@@ -8,7 +8,10 @@ class AuthService {
       where: {
         [Op.or]: [
           { email: payload.email },
-          { telephoneNumber: payload.telephoneNumber },
+          {
+            telephoneNumber: payload.telephoneNumber,
+            countryCode: payload.countryCode,
+          },
         ],
       },
     });

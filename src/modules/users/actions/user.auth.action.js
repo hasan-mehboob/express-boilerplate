@@ -3,7 +3,14 @@ const crudService = new services.CrudService(models.Users);
 
 exports.auth = {
   signUp: async (req, res, next) => {
-    const { body: payload } = req;
+    let { body: payload } = req;
+    payload = _.omit(payload, [
+      "createdAt",
+      "updatedAt",
+      "isVerified",
+      "verificationCode",
+      "codeExpiryTime",
+    ]);
     try {
       let Users = await authService.signUp(payload);
 
