@@ -24,6 +24,12 @@ require("./config/db");
 
 require("./src/server");
 /**
+ * Add constants
+ */
+
+require("./config/constants");
+
+/**
  *  start server
  */
 

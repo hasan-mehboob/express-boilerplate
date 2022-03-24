@@ -13,7 +13,6 @@ exports.createNewsLetterSubscriber = async (req, res, next) => {
     const newsLetter = await models.NewsLetterSubscribers.create({
       email: payload.email,
     });
-    // FIXME: change comming soom lead
     libs.email_service.commingSoonLeads({
       email: payload.email,
     });

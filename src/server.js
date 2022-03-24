@@ -10,6 +10,7 @@ app.use(passport.initialize());
 app.use(cors());
 
 global.messages = require("../config/messages");
+global.emailConstraints = require("../config/emailConstraints");
 global.dataConstraint = require("../config/data_constraints");
 
 /**
