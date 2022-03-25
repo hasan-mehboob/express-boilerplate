@@ -1,5 +1,19 @@
 const { body, param, check } = expressValidator;
 let signUpPayloadValidation = [
+  body("email")
+    .exists()
+    .withMessage(messages.notPresent)
+    .matches(dataConstraint.EMAIL_REGEX)
+    .withMessage(messages.invalidFormat("Email"))
+    .isString()
+    .withMessage(messages.invalidDataType("String")),
+  body("password")
+    .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
+    .withMessage(messages.invalidLength)
+    .isString()
+    .withMessage(messages.invalidDataType("String")),
+];
+let completeProfilePayloadValidation = [
   body("firstName")
     .notEmpty()
     .withMessage(messages.notEmpty)
@@ -15,11 +29,6 @@ let signUpPayloadValidation = [
     .withMessage(messages.notPresent)
     .matches(dataConstraint.EMAIL_REGEX)
     .withMessage(messages.invalidFormat("Email"))
-    .isString()
-    .withMessage(messages.invalidDataType("String")),
-  body("password")
-    .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
-    .withMessage(messages.invalidLength)
     .isString()
     .withMessage(messages.invalidDataType("String")),
   body("telephoneNumber")
@@ -227,4 +236,5 @@ module.exports = {
   verifyCodePayloadValidation,
   resendCodePayloadValidation,
   updatePayloadValidation,
+  completeProfilePayloadValidation,
 };

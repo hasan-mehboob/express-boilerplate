@@ -6,23 +6,11 @@ class AuthService {
   async signUp(payload) {
     let user = await this.model.findOne({
       where: {
-        [Op.or]: [
-          { email: payload.email },
-          {
-            telephoneNumber: payload.telephoneNumber,
-            countryCode: payload.countryCode,
-          },
-        ],
+        email: payload.email,
       },
     });
     if (user && user.email === payload.email) {
       throw createError(400, messages.emailExists);
-    } else if (
-      user &&
-      user.telephoneNumber === payload.telephoneNumber &&
-      user.countryCode === payload.countryCode
-    ) {
-      throw createError(400, messages.telephoneNumberExists);
     }
     payload = {
       ...payload,
@@ -63,6 +51,11 @@ class AuthService {
               }
             : { telephoneNumber: true, email: user.isVerified.email }),
         },
+        ...(user?.signupStage !== constants.SIGNUP_STAGES.SUCCESS
+          ? {
+              signupStage: constants.SIGNUP_STAGES.COMPLETE_PROFILE,
+            }
+          : null),
       },
       {
         where: {

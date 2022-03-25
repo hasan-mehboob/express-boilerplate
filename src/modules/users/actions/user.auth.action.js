@@ -1,3 +1,5 @@
+const { SIGNUP_STAGES } = require("../../../../config/constants");
+
 const authService = new services.AuthService(models.Users);
 const crudService = new services.CrudService(models.Users);
 
@@ -12,8 +14,8 @@ exports.auth = {
       "codeExpiryTime",
     ]);
     try {
+      payload.signupStage = constants.SIGNUP_STAGES.VERIFY_CODE;
       let Users = await authService.signUp(payload);
-
       return res.json({
         status: 200,
         message: messages.created("Users"),
@@ -26,7 +28,7 @@ exports.auth = {
   signIn: async (req, res, next) => {
     try {
       const token = utils.token.getJWTToken(req.user);
-      req.user.accessToken = token;
+      req.user.dataValues.accessToken = token;
       return res.json({
         status: 200,
         message: messages.signedIn,
@@ -134,11 +136,25 @@ exports.auth = {
     const { user } = req;
     const token = utils.token.getJWTToken(user);
     if (token) {
-      // await crudService.update(
-      //   { signupStages: SIGNUP_STAGE.SELECT_ROLE },
-      //   user.id,
-      //   messages.userNotFound
-      // );
+      await crudService.update(
+        {
+          ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
+            ? { signupStage: SIGNUP_STAGES.COMPLETE_PROFILE }
+            : null),
+          isVerified: {
+            gmail: true,
+            ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
+              ? {
+                  telephoneNumber: false,
+                }
+              : {
+                  telephoneNumber: user.isVerified.telephoneNumber,
+                }),
+          },
+        },
+        user.id,
+        messages.userNotFound
+      );
       res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
     } else {
       throw createError(400, messages.badRequest);
@@ -149,6 +165,25 @@ exports.auth = {
     const token = utils.token.getJWTToken(user);
 
     if (token) {
+      await crudService.update(
+        {
+          ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
+            ? { signupStage: SIGNUP_STAGES.COMPLETE_PROFILE }
+            : null),
+          isVerified: {
+            gmail: true,
+            ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
+              ? {
+                  telephoneNumber: false,
+                }
+              : {
+                  telephoneNumber: user.isVerified.telephoneNumber,
+                }),
+          },
+        },
+        user.id,
+        messages.userNotFound
+      );
       res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
     } else {
       throw createError(400, messages.badRequest);

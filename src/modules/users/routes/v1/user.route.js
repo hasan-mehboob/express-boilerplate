@@ -6,6 +6,13 @@ router
     middlewares.email_format.format,
     actions.users.auth.signUp
   )
+  .patch(
+    "/users/complete-profile",
+    validators.users.completeProfilePayloadValidation,
+    middlewares.validation.request,
+    middlewares.email_format.format,
+    actions.users.update.completeProfile
+  )
   .get(
     "/users/auth/login",
     validators.users.signInPayloadValidation,

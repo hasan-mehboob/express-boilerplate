@@ -45,4 +45,38 @@ exports.update = {
       next(err);
     }
   },
+  completeProfile: async (req, res, next) => {
+    try {
+      let { body: payload, user } = req;
+      payload = _.omit(payload, [
+        "createdAt",
+        "updatedAt",
+        "isVerified",
+        "verificationCode",
+        "codeExpiryTime",
+      ]);
+      const exsistingPhoneNumber = await models.Users.findOne({
+        where: {
+          telephoneNumber: payload.telephoneNumber,
+          countryCode: payload.countryCode,
+        },
+      });
+      if (exsistingPhoneNumber) {
+        throw createError(400, messages.telephoneNumberExists);
+      }
+      await crudService.update(
+        { ...payload, signupStage: constants.SIGNUP_STAGES.SUCCESS },
+        user.id,
+        messages.userNotFound
+      );
+      Object.assign(user, payload);
+      return res.json({
+        status: 200,
+        message: messages.updatedModel("User"),
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

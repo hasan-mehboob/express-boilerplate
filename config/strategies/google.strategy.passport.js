@@ -27,22 +27,44 @@ module.exports = function (passportName) {
               email: profile.emails[0].value,
             },
           });
+          const firstName = profile.displayName
+            .split(" ")
+            .slice(0, -1)
+            .join(" ");
+          const lastName = profile.displayName.split(" ").slice(-1).join(" ");
           if (!user) {
-            const firstName = profile.displayName
-              .split(" ")
-              .slice(0, -1)
-              .join(" ");
-            const lastName = profile.displayName.split(" ").slice(-1).join(" ");
             var user = await model.create({
+              email: profile.emails[0].value,
+            });
+            helpers.createUserSocialAccount({
               email: profile.emails[0].value,
               firstName: firstName,
               lastName: lastName,
               fullName: profile.displayName,
               transportUid: profile.id,
+              userId: user.id,
               provider: profile.provider,
               accessToken: token,
               profilePhoto: profile.photos ? profile.photos[0].value : "",
             });
+          } else {
+            const isSocialAvailable = await models.UserSocialAccounts.findOne({
+              where: {
+                email: profile.emails[0].value,
+              },
+            });
+            if (!isSocialAvailable)
+              helpers.createUserSocialAccount({
+                email: profile.emails[0].value,
+                firstName: firstName,
+                lastName: lastName,
+                fullName: profile.displayName,
+                transportUid: profile.id,
+                userId: user.id,
+                provider: profile.provider,
+                accessToken: token,
+                profilePhoto: profile.photos ? profile.photos[0].value : "",
+              });
           }
           return done(null, user);
         } catch (error) {
