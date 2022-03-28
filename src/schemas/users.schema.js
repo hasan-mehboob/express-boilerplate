@@ -70,5 +70,3 @@ module.exports = (sequelize, DataTypes) => {
 
   return Users;
 };
-
-const verificationCodeDefault = { email: null, telephoneNumber: null };
