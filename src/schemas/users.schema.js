@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         defaultValue: "",
       },
-      telephoneNumber: DataTypes.STRING,
+      telephoneNumber: DataTypes.BIGINT,
       countryCode: DataTypes.INTEGER,
       verificationCode: {
         type: DataTypes.JSONB(),
