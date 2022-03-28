@@ -47,7 +47,7 @@ for (let schemaFile of utils.globalFile.getGlobbedFiles("./**/*.schema.js")) {
     models.Sequelize.DataTypes
   );
   schema &&
-    (types["models"][schema.tableName] = `typeof import("${schemaFile.replace(
+    (types["models"][schema.name] = `typeof import("${schemaFile.replace(
       ".js",
       ""
     )}")`);

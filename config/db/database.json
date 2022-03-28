@@ -2,7 +2,7 @@
   "development": {
     "username": "postgres",
     "password": "password",
-    "database": "legacy_suit",
+    "database": "legacy-suite",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
@@ -15,8 +15,8 @@
   },
   "production": {
     "username": "postgres",
-    "password": "ffc96517d2afb887d82029f566428f83",
-    "database": "legacy",
+    "password": "019dbe22f64a3a0e780ef9aab70901aa",
+    "database": "legacy_suite",
     "host": "34.201.46.214",
     "dialect": "postgres"
   }

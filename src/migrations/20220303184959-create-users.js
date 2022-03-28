@@ -1,4 +1,5 @@
 "use strict";
+const { SIGNUP_STAGES } = require("../../config/constants");
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Users", {
@@ -22,7 +23,7 @@ module.exports = {
         type: Sequelize.STRING(500),
         defaultValue: "",
       },
-      telephoneNumber: Sequelize.STRING,
+      telephoneNumber: Sequelize.BIGINT,
       countryCode: Sequelize.INTEGER,
       dob: {
         type: Sequelize.DATE,
@@ -51,6 +52,14 @@ module.exports = {
       },
       fcmToken: {
         type: Sequelize.STRING,
+      },
+      signupStage: {
+        type: Sequelize.ENUM(
+          SIGNUP_STAGES.VERIFY_CODE,
+          SIGNUP_STAGES.COMPLETE_PROFILE,
+          SIGNUP_STAGES.SUCCESS
+        ),
+        defaultValue: SIGNUP_STAGES.VERIFY_CODE,
       },
       createdAt: {
         allowNull: false,

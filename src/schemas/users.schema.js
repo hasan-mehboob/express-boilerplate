@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const { SIGNUP_STAGES } = require("../../config/constants");
+
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -23,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         defaultValue: "",
       },
-      telephoneNumber: DataTypes.STRING,
+      telephoneNumber: DataTypes.BIGINT,
       countryCode: DataTypes.INTEGER,
       verificationCode: {
         type: DataTypes.JSONB(),
@@ -34,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSONB(),
         defaultValue: { email: false, telephoneNumber: false },
       },
+      signupStage: {
+        type: DataTypes.ENUM(
+          SIGNUP_STAGES.VERIFY_CODE,
+          SIGNUP_STAGES.COMPLETE_PROFILE,
+          SIGNUP_STAGES.SUCCESS
+        ),
+        defaultValue: SIGNUP_STAGES.VERIFY_CODE,
+      },
       fcmToken: {
         type: DataTypes.STRING,
       },
@@ -43,5 +53,20 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Users",
     }
   );
+  Users.excludedAttributes = [
+    "password",
+    "salt",
+    "createdAt",
+    "updatedAt",
+    "deletedAt",
+  ];
+  Users.excludedAttributesFromRequest = [
+    "createdAt",
+    "updatedAt",
+    "isVerified",
+    "verificationCode",
+    "codeExpiryTime",
+  ];
+
   return Users;
 };

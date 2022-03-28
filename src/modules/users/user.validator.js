@@ -1,5 +1,19 @@
 const { body, param, check } = expressValidator;
 let signUpPayloadValidation = [
+  body("email")
+    .exists()
+    .withMessage(messages.notPresent)
+    .matches(dataConstraint.EMAIL_REGEX)
+    .withMessage(messages.invalidFormat("Email"))
+    .isString()
+    .withMessage(messages.invalidDataType("String")),
+  body("password")
+    .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
+    .withMessage(messages.invalidLength)
+    .isString()
+    .withMessage(messages.invalidDataType("String")),
+];
+let completeProfilePayloadValidation = [
   body("firstName")
     .notEmpty()
     .withMessage(messages.notEmpty)
@@ -15,11 +29,6 @@ let signUpPayloadValidation = [
     .withMessage(messages.notPresent)
     .matches(dataConstraint.EMAIL_REGEX)
     .withMessage(messages.invalidFormat("Email"))
-    .isString()
-    .withMessage(messages.invalidDataType("String")),
-  body("password")
-    .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
-    .withMessage(messages.invalidLength)
     .isString()
     .withMessage(messages.invalidDataType("String")),
   body("telephoneNumber")
@@ -134,6 +143,12 @@ let updatePayloadValidation = [
     .withMessage(messages.invalidDataType("String"))
     .isIn(["single", "married", "divorced"])
     .optional(),
+  body("password")
+    .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
+    .withMessage(messages.invalidLength)
+    .isString()
+    .withMessage(messages.invalidDataType("String"))
+    .optional(),
 ];
 
 let signInPayloadValidation = [
@@ -153,11 +168,15 @@ let signInPayloadValidation = [
     .withMessage(messages.invalidDataType("String")),
 ];
 let forgotPasswordPayloadValidation = [
-  body("user")
+  body("userName")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()
     .withMessage(messages.notEmpty),
+  body("countryCode")
+    .isNumeric()
+    .withMessage(messages.invalidDataType("Number"))
+    .optional(),
 ];
 
 let resetPasswordPayload = [
@@ -217,4 +236,5 @@ module.exports = {
   verifyCodePayloadValidation,
   resendCodePayloadValidation,
   updatePayloadValidation,
+  completeProfilePayloadValidation,
 };

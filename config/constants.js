@@ -2,17 +2,22 @@ const constants = {
   PUBLIC_ROUTES: [
     {
       methods: ["GET", "POST"],
-      path: /^.+\/public?.+/,
+      path: /^(.+)?\/public\/?(.+)?/,
     },
     {
       methods: ["GET"],
-      path: /^.+\/login?.+/,
+      path: /^(.+)?\/login\/?(.+)?/,
     },
     {
-      methods: ["POST", "PATCH"],
-      path: /^.+\/auth?.+/,
+      methods: ["POST", "PATCH", "GET"],
+      path: /^(.+)?\/auth\/?(.+)?/,
     },
   ],
+  SIGNUP_STAGES: {
+    VERIFY_CODE: "verifyCode",
+    COMPLETE_PROFILE: "completeProfile",
+    SUCCESS: "success",
+  },
 };
 module.exports = constants;
 

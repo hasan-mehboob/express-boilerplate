@@ -1,12 +1,15 @@
+const { SIGNUP_STAGES } = require("../../../../config/constants");
+
 const authService = new services.AuthService(models.Users);
 const crudService = new services.CrudService(models.Users);
 
 exports.auth = {
   signUp: async (req, res, next) => {
-    const { body: payload } = req;
+    let { body: payload } = req;
+    payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
     try {
+      payload.signupStage = constants.SIGNUP_STAGES.VERIFY_CODE;
       let Users = await authService.signUp(payload);
-
       return res.json({
         status: 200,
         message: messages.created("Users"),
@@ -19,7 +22,7 @@ exports.auth = {
   signIn: async (req, res, next) => {
     try {
       const token = utils.token.getJWTToken(req.user);
-      req.user.accessToken = token;
+      req.user.dataValues.accessToken = token;
       return res.json({
         status: 200,
         message: messages.signedIn,
@@ -33,11 +36,10 @@ exports.auth = {
   verifyCode: async (req, res, next) => {
     try {
       let {
-        body: { userName, code },
+        body: { code, isEmail },
         params: { id },
       } = req;
       code = parseInt(req.body.code);
-      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
 
       let user = await authService.verifyCode(id, code, isEmail);
       return res.json({
@@ -53,10 +55,9 @@ exports.auth = {
   resendCode: async (req, res, next) => {
     try {
       const {
-        body: { userName },
+        body: { isEmail },
         params: { id },
       } = req;
-      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
       let user = await authService.resendCode(id, isEmail, crudService);
 
       return res.json({
@@ -72,8 +73,11 @@ exports.auth = {
     try {
       let { body: payload } = req;
       let user = await crudService.getModelByUserName(payload);
-      const isEmail = dataConstraint.EMAIL_REGEX.test(payload.user);
-      user = await authService.verification({ isEmail, user, crudService });
+      user = await authService.verification({
+        isEmail: payload.isEmail,
+        user,
+        crudService,
+      });
       return res.json({
         status: 200,
         message: messages.success,
@@ -86,7 +90,7 @@ exports.auth = {
   resetPassword: async (req, res, next) => {
     try {
       const {
-        body: { code, password, userName },
+        body: { code, password, isEmail },
         params: { id },
       } = req;
       const verificationCode = parseInt(code);
@@ -94,7 +98,6 @@ exports.auth = {
       if (!user) {
         throw createError(400, messages.userNotFound);
       }
-      const isEmail = dataConstraint.EMAIL_REGEX.test(userName);
       const currentTime = Date.now();
       // It will be empty when no request had been made for resetPassword
       if (!user.codeExpiryTime) {
@@ -126,12 +129,24 @@ exports.auth = {
   googleCb: async (req, res, next) => {
     const { user } = req;
     const token = utils.token.getJWTToken(user);
+    let payload = {};
     if (token) {
-      // await crudService.update(
-      //   { signupStages: SIGNUP_STAGE.SELECT_ROLE },
-      //   user.id,
-      //   messages.userNotFound
-      // );
+      if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
+        Object.assign(payload, {
+          signupStage: SIGNUP_STAGES.COMPLETE_PROFILE,
+          isVerified: {
+            telephoneNumber: false,
+            email: true,
+          },
+        });
+      } else
+        Object.assign(payload, {
+          telephoneNumber: user.isVerified.telephoneNumber,
+          isVerified: {
+            email: true,
+          },
+        });
+      await crudService.update(payload, user.id, messages.userNotFound);
       res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
     } else {
       throw createError(400, messages.badRequest);
@@ -140,8 +155,24 @@ exports.auth = {
   facebookCb: async (req, res, next) => {
     const { user } = req;
     const token = utils.token.getJWTToken(user);
-
+    let payload = {};
     if (token) {
+      if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
+        Object.assign(payload, {
+          signupStage: SIGNUP_STAGES.COMPLETE_PROFILE,
+          isVerified: {
+            telephoneNumber: false,
+            email: true,
+          },
+        });
+      } else
+        Object.assign(payload, {
+          telephoneNumber: user.isVerified.telephoneNumber,
+          isVerified: {
+            email: true,
+          },
+        });
+      await crudService.update(payload, user.id, messages.userNotFound);
       res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
     } else {
       throw createError(400, messages.badRequest);
