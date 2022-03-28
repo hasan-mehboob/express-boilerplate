@@ -53,5 +53,22 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Users",
     }
   );
+  Users.excludedAttributes = [
+    "password",
+    "salt",
+    "createdAt",
+    "updatedAt",
+    "deletedAt",
+  ];
+  Users.excludedAttributesFromRequest = [
+    "createdAt",
+    "updatedAt",
+    "isVerified",
+    "verificationCode",
+    "codeExpiryTime",
+  ];
+
   return Users;
 };
+
+const verificationCodeDefault = { email: null, telephoneNumber: null };

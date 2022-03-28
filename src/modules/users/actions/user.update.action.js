@@ -5,13 +5,7 @@ exports.update = {
   updateUser: async (req, res, next) => {
     try {
       let { body: payload, user } = req;
-      payload = _.omit(payload, [
-        "createdAt",
-        "updatedAt",
-        "isVerified",
-        "verificationCode",
-        "codeExpiryTime",
-      ]);
+      payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
       if (
         payload.telephoneNumber &&
         payload.telephoneNumber !== user.telephoneNumber
@@ -34,8 +28,11 @@ exports.update = {
       }
       if (payload.password)
         payload["password"] = utils.hash.makeHashValue(payload.password);
-      await crudService.update({ ...payload }, user.id, messages.userNotFound);
-      const userData = await models.Users.findByPk(user.id);
+      const userData = await crudService.update(
+        { ...payload },
+        user.id,
+        messages.userNotFound
+      );
       return res.json({
         status: 200,
         message: messages.updatedModel("User"),
@@ -48,13 +45,7 @@ exports.update = {
   completeProfile: async (req, res, next) => {
     try {
       let { body: payload, user } = req;
-      payload = _.omit(payload, [
-        "createdAt",
-        "updatedAt",
-        "isVerified",
-        "verificationCode",
-        "codeExpiryTime",
-      ]);
+      payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
       const exsistingPhoneNumber = await models.Users.findOne({
         where: {
           telephoneNumber: payload.telephoneNumber,
@@ -64,16 +55,15 @@ exports.update = {
       if (exsistingPhoneNumber) {
         throw createError(400, messages.telephoneNumberExists);
       }
-      await crudService.update(
+      const updatedUser = await crudService.update(
         { ...payload, signupStage: constants.SIGNUP_STAGES.SUCCESS },
         user.id,
         messages.userNotFound
       );
-      Object.assign(user, payload);
       return res.json({
         status: 200,
         message: messages.updatedModel("User"),
-        data: user,
+        data: updatedUser,
       });
     } catch (error) {
       next(error);

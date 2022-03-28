@@ -6,13 +6,7 @@ const crudService = new services.CrudService(models.Users);
 exports.auth = {
   signUp: async (req, res, next) => {
     let { body: payload } = req;
-    payload = _.omit(payload, [
-      "createdAt",
-      "updatedAt",
-      "isVerified",
-      "verificationCode",
-      "codeExpiryTime",
-    ]);
+    payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
     try {
       payload.signupStage = constants.SIGNUP_STAGES.VERIFY_CODE;
       let Users = await authService.signUp(payload);
@@ -135,26 +129,24 @@ exports.auth = {
   googleCb: async (req, res, next) => {
     const { user } = req;
     const token = utils.token.getJWTToken(user);
+    let payload = {};
     if (token) {
-      await crudService.update(
-        {
-          ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
-            ? { signupStage: SIGNUP_STAGES.COMPLETE_PROFILE }
-            : null),
+      if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
+        Object.assign(payload, {
+          signupStage: SIGNUP_STAGES.COMPLETE_PROFILE,
           isVerified: {
-            gmail: true,
-            ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
-              ? {
-                  telephoneNumber: false,
-                }
-              : {
-                  telephoneNumber: user.isVerified.telephoneNumber,
-                }),
+            telephoneNumber: false,
+            email: true,
           },
-        },
-        user.id,
-        messages.userNotFound
-      );
+        });
+      } else
+        Object.assign(payload, {
+          telephoneNumber: user.isVerified.telephoneNumber,
+          isVerified: {
+            email: true,
+          },
+        });
+      await crudService.update(payload, user.id, messages.userNotFound);
       res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
     } else {
       throw createError(400, messages.badRequest);
@@ -163,27 +155,24 @@ exports.auth = {
   facebookCb: async (req, res, next) => {
     const { user } = req;
     const token = utils.token.getJWTToken(user);
-
+    let payload = {};
     if (token) {
-      await crudService.update(
-        {
-          ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
-            ? { signupStage: SIGNUP_STAGES.COMPLETE_PROFILE }
-            : null),
+      if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
+        Object.assign(payload, {
+          signupStage: SIGNUP_STAGES.COMPLETE_PROFILE,
           isVerified: {
-            gmail: true,
-            ...(user.signupStage !== constants.SIGNUP_STAGES.SUCCESS
-              ? {
-                  telephoneNumber: false,
-                }
-              : {
-                  telephoneNumber: user.isVerified.telephoneNumber,
-                }),
+            telephoneNumber: false,
+            email: true,
           },
-        },
-        user.id,
-        messages.userNotFound
-      );
+        });
+      } else
+        Object.assign(payload, {
+          telephoneNumber: user.isVerified.telephoneNumber,
+          isVerified: {
+            email: true,
+          },
+        });
+      await crudService.update(payload, user.id, messages.userNotFound);
       res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
     } else {
       throw createError(400, messages.badRequest);

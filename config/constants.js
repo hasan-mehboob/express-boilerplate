@@ -2,15 +2,15 @@ const constants = {
   PUBLIC_ROUTES: [
     {
       methods: ["GET", "POST"],
-      path: /^(.+)?\/public\/?(.+)/,
+      path: /^(.+)?\/public\/?(.+)?/,
     },
     {
       methods: ["GET"],
-      path: /^(.+)?\/login\/?(.+)/,
+      path: /^(.+)?\/login\/?(.+)?/,
     },
     {
       methods: ["POST", "PATCH", "GET"],
-      path: /^(.+)?\/auth\/?(.+)/,
+      path: /^(.+)?\/auth\/?(.+)?/,
     },
   ],
   SIGNUP_STAGES: {

@@ -8,11 +8,15 @@ class CrudService {
   }
 
   async update(payload, id, message) {
-    let model = await this.model.update({ ...payload }, { where: { id } });
+    let model = await this.model.update(
+      { ...payload },
+      { where: { id }, returning: true }
+    );
     if (!model) {
       throw createError(404, message);
     }
-    return model;
+    if (model[0] === 1) return model[1][0];
+    else return model;
   }
   async updateVerification({ isEmail, id, message }) {
     const verificationCode = utils.random.generateRandomNumber();

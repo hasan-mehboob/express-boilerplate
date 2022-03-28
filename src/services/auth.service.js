@@ -40,29 +40,31 @@ class AuthService {
     if (verificationCode !== code && code !== 0) {
       throw createError(400, messages.invalidCode);
     }
-
-    let userIns = await this.model.update(
-      {
+    const payload = {};
+    if (isEmail)
+      Object.assign(payload, {
         isVerified: {
-          ...(isEmail
-            ? {
-                email: true,
-                telephoneNumber: user.isVerified.telephoneNumber,
-              }
-            : { telephoneNumber: true, email: user.isVerified.email }),
+          email: true,
+          telephoneNumber: user.isVerified.telephoneNumber,
         },
-        ...(user?.signupStage !== constants.SIGNUP_STAGES.SUCCESS
-          ? {
-              signupStage: constants.SIGNUP_STAGES.COMPLETE_PROFILE,
-            }
-          : null),
+      });
+    else
+      Object.assign(payload, {
+        isVerified: {
+          telephoneNumber: true,
+          email: user.isVerified.email,
+        },
+      });
+    if (user?.signupStage !== constants.SIGNUP_STAGES.SUCCESS)
+      Object.assign(payload, {
+        signupStage: constants.SIGNUP_STAGES.COMPLETE_PROFILE,
+      });
+
+    let userIns = await this.model.update(payload, {
+      where: {
+        id: user.id,
       },
-      {
-        where: {
-          id: user.id,
-        },
-      }
-    );
+    });
     return userIns;
   }
 
@@ -80,48 +82,48 @@ class AuthService {
     try {
       const verificationCode = utils.random.generateRandomNumber();
       const codeExpiryTime = Date.now();
-      await crudService.update(
-        {
+      const payload = {};
+      if (isEmail)
+        Object.assign(payload, {
           verificationCode: {
-            ...(isEmail
-              ? {
-                  email: verificationCode,
-                  telephoneNumber: user?.verificationCode?.telephoneNumber,
-                }
-              : {
-                  telephoneNumber: verificationCode,
-                  email: user?.verificationCode?.email,
-                }),
+            email: verificationCode,
+            telephoneNumber: user?.verificationCode?.telephoneNumber,
           },
           codeExpiryTime: {
-            ...(isEmail
-              ? {
-                  email: codeExpiryTime,
-                  telephoneNumber: user?.codeExpiryTime?.telephoneNumber,
-                }
-              : {
-                  telephoneNumber: codeExpiryTime,
-                  email: user?.codeExpiryTime?.email,
-                }),
+            email: codeExpiryTime,
+            telephoneNumber: user?.codeExpiryTime?.telephoneNumber,
           },
-        },
+        });
+      else
+        Object.assign(payload, {
+          verificationCode: {
+            telephoneNumber: verificationCode,
+            email: user?.verificationCode?.email,
+          },
+          codeExpiryTime: {
+            telephoneNumber: codeExpiryTime,
+            email: user?.codeExpiryTime?.email,
+          },
+        });
+
+      const userData = await crudService.update(
+        payload,
         user.id,
         messages.userNotFound
       );
-      const userData = await models.Users.findByPk(user.id);
       if (isEmail)
         await libs.email_service.sendVerificationCode(
           userData,
           isEmail
-            ? userData.verificationCode.email
-            : userData.verificationCode.telephoneNumber
+            ? userData?.verificationCode?.email
+            : userData?.verificationCode?.telephoneNumber
         );
       else
         libs.sms_service.sendVerificationCode(
           userData,
           isEmail
-            ? userData.verificationCode.email
-            : userData.verificationCode.telephoneNumber
+            ? userData?.verificationCode?.email
+            : userData?.verificationCode?.telephoneNumber
         );
       userData.token = utils.token.getJWTToken(userData);
       return userData;
