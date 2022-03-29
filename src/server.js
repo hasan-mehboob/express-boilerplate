@@ -1,4 +1,5 @@
 // const swaggerDocument = require(`../swagger/openApi.js`);
+require("./libs/sentry.lib");
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -13,10 +14,6 @@ global.messages = require("../config/messages");
 global.emailConstraints = require("../config/emailConstraints");
 global.dataConstraint = require("../config/data_constraints");
 
-/**
- * Add module globally icludes action and routes
- */
-
 require("./middlewares");
 require("./services");
 require("./modules");
@@ -25,11 +22,13 @@ require("../config/strategies");
 /**
  * Handle unhandle exception
  */
+app.use(sentry.Handlers.errorHandler());
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
