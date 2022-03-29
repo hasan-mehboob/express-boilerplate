@@ -12,9 +12,10 @@ module.exports = function () {
       },
       async (req, email, password, done) => {
         try {
-          let user = await models.Users.findOne({
+          const model=req.roleModel;
+          let user = await model.findOne({
             where: {
-              email: email,
+              email,
             },
           });
           if (!user || user.password !== utils.hash.makeHashValue(password)) {
