@@ -26,3 +26,4 @@ global.fs = require("fs");
 global.expressValidator = require("express-validator");
 global.util = require("util");
 global.axios = require("axios").default;
+global.sentry = require("@sentry/node");
