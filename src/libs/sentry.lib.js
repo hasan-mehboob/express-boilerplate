@@ -21,6 +21,5 @@ sentry.init({
   tracesSampleRate: 1.0,
 });
 app.use(sentry.Handlers.requestHandler());
-app.use(sentry.Handlers.requestHandler());
 // TracingHandler creates a trace for every incoming request
 app.use(sentry.Handlers.tracingHandler());
