@@ -12,16 +12,22 @@ module.exports = function () {
       },
       async (req, email, password, done) => {
         try {
-          const model=req.roleModel;
+          const model = req.roleModel;
           let user = await model.findOne({
             where: {
               email,
             },
           });
-          if (!user || user.password !== utils.hash.makeHashValue(password)) {
+          if (
+            !user ||
+            user.password !== utils.hash.makeHashValue(password, user.salt)
+          ) {
             return done(null, false, { message: messages.invalidLogin });
           }
-
+          user = utils.filterAttributes.excludeAttributes(
+            user,
+            model.excludedAttributes
+          );
           return done(null, user);
         } catch (error) {
           return done(error);

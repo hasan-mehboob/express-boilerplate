@@ -17,7 +17,8 @@ exports.post = {
         },
         attributes: ["id", "question"],
       });
-      if (prevQuestion) throw createError(403, "Already Exsist");
+      if (prevQuestion)
+        throw createError(403, messages.alreadyExist("question"));
       const securityQuestion = await models.SecurityQuestions.create(payload);
       return res.json({
         status: 200,
@@ -34,7 +35,7 @@ exports.post = {
         body: { questions },
         user: admin,
       } = req;
-      questions=questions.map(question=>question.trim())
+      questions = questions.map((question) => question.trim());
       const prevQuestions = await models.SecurityQuestions.findAll({
         where: {
           question: {
@@ -43,7 +44,8 @@ exports.post = {
         },
         attributes: ["id", "question"],
       });
-      if (prevQuestions?.length > 0) throw createError(403, "Already Exsist");
+      if (prevQuestions?.length > 0)
+        throw createError(403, messages.alreadyExist("question"));
       const payload = questions.map((question) => ({
         question: question.trim(),
         createdBy: admin.id,

@@ -13,7 +13,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Admins.init(
     {
-      salt: Sequelize.STRING,
+      salt: {
+        type:Sequelize.STRING,
+        allowNull:false,
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -29,5 +32,12 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Admins",
     }
   );
+  Admins.excludedAttributes = [
+    "password",
+    "salt",
+    "createdAt",
+    "updatedAt",
+    "deletedAt",
+  ];
   return Admins;
 };

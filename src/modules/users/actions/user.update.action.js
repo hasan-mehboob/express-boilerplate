@@ -26,8 +26,6 @@ exports.update = {
           },
         });
       }
-      if (payload.password)
-        payload["password"] = utils.hash.makeHashValue(payload.password);
       const userData = await crudService.update(
         { ...payload },
         user.id,

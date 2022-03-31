@@ -19,15 +19,20 @@ class AuthService {
         telephoneNumber: null,
       },
     };
-    payload["password"] = utils.hash.makeHashValue(payload.password);
-    user = await this.model.create(payload);
+    const salt = utils.salt.generateSalt();
+    payload.salt = salt;
+    payload["password"] = utils.hash.makeHashValue(payload.password, salt);
+    const userData = await this.model.create(payload, {
+      returning: utils.filterAttributes.filter.includeAttributes(models.Users),
+      plain: true,
+    });
     await libs.email_service.sendVerificationCode(
-      user,
-      user.verificationCode.email
+      userData,
+      userData.verificationCode.email
     );
-    var token = utils.token.getJWTToken(user);
-    user.dataValues.accessToken = token;
-    return user;
+    var token = utils.token.getJWTToken(userData);
+    userData.dataValues.accessToken = token;
+    return userData;
   }
   async verifyCode(id, code, isEmail) {
     const user = await this.model.findByPk(id);
@@ -64,8 +69,9 @@ class AuthService {
       where: {
         id: user.id,
       },
+      returning: true,
     });
-    return userIns;
+    return userIns[1][0];
   }
 
   async resendCode(id, isEmail, crudService) {

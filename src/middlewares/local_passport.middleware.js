@@ -4,7 +4,7 @@ exports.authenticate = async (req, res, next) => {
     { session: false },
     function (err, user, info) {
       if (err || !user) {
-        next(createError(401, info.message));
+        next(createError(401, err));
       } else {
         req.user = user;
         next();

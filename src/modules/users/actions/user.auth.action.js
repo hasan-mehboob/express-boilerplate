@@ -106,13 +106,14 @@ exports.auth = {
       if (currentTime - user.codeExpiryTime > dataConstraint.CODE_EXPIRY_TIME) {
         throw createError(400, messages.codeExpried);
       }
+      const salt = utils.salt.generateSalt();
       const verificationPayload = isEmail
         ? user.verificationCode.email
         : user.verificationCode.telephoneNumber;
       // FIXME: Remove hard coded value
       if (verificationPayload === verificationCode || verificationCode === 0) {
         user = await crudService.update(
-          { password: utils.hash.makeHashValue(password) },
+          { password: utils.hash.makeHashValue(password, salt), salt },
           user.id,
           messages.userNotFound
         );
