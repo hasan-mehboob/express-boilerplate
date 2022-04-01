@@ -4,7 +4,7 @@ class AuthService {
   }
 
   async signUp(payload) {
-    let user = await this.model.findOne({
+    let user = await this.model.scope().findOne({
       where: {
         email: payload.email,
       },
@@ -22,10 +22,7 @@ class AuthService {
     const salt = utils.salt.generateSalt();
     payload.salt = salt;
     payload["password"] = utils.hash.makeHashValue(payload.password, salt);
-    const userData = await this.model.create(payload, {
-      returning: utils.filterAttributes.filter.includeAttributes(models.Users),
-      plain: true,
-    });
+    const userData = await this.model.create(payload);
     await libs.email_service.sendVerificationCode(
       userData,
       userData.verificationCode.email

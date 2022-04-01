@@ -56,11 +56,16 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Users",
     }
   );
+  Users.addHook("afterCreate", "exclude_attributes", (user, options) => {
+    user = utils.filterAttributes.filter.excludeAttributes(
+      user,
+      Users.excludedAttributes,
+      []
+    );
+  });
   Users.excludedAttributes = [
     "password",
     "salt",
-    "createdAt",
-    "updatedAt",
     "deletedAt",
   ];
   Users.excludedAttributesFromRequest = [
