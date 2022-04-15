@@ -19,6 +19,9 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
       },
+      salt: {
+        type: Sequelize.STRING,
+      },
       profilePhoto: {
         type: Sequelize.STRING(500),
         defaultValue: "",

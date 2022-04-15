@@ -4,13 +4,21 @@ router
     validators.users.signUpPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
+    middlewares.request_validation.requestValidation("Users"),
     actions.users.auth.signUp
+  )
+  .get(
+    "/users/get-profile/:id?",
+    validators.users.getProfile,
+    middlewares.validation.request,
+    actions.users.get.getProfile
   )
   .patch(
     "/users/complete-profile",
     validators.users.completeProfilePayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
+    middlewares.request_validation.requestValidation("Users"),
     actions.users.update.completeProfile
   )
   .get(
@@ -25,6 +33,7 @@ router
     "/users/update",
     validators.users.updatePayloadValidation,
     middlewares.email_format.format,
+    middlewares.request_validation.requestValidation("Users"),
     middlewares.validation.request,
     actions.users.update.updateUser
   )

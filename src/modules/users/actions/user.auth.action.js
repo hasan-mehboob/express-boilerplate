@@ -6,7 +6,6 @@ const crudService = new services.CrudService(models.Users);
 exports.auth = {
   signUp: async (req, res, next) => {
     let { body: payload } = req;
-    payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
     try {
       payload.signupStage = constants.SIGNUP_STAGES.VERIFY_CODE;
       let Users = await authService.signUp(payload);
@@ -21,12 +20,14 @@ exports.auth = {
   },
   signIn: async (req, res, next) => {
     try {
-      const token = utils.token.getJWTToken(req.user);
-      req.user.dataValues.accessToken = token;
+      let { user } = req;
+      user = await models.Users.findByPk(user.id);
+      const token = utils.token.getJWTToken(user);
+      user.dataValues.accessToken = token;
       return res.json({
         status: 200,
         message: messages.signedIn,
-        data: req.user,
+        data: user,
       });
     } catch (err) {
       next(err);
@@ -106,13 +107,14 @@ exports.auth = {
       if (currentTime - user.codeExpiryTime > dataConstraint.CODE_EXPIRY_TIME) {
         throw createError(400, messages.codeExpried);
       }
+      const salt = utils.salt.generateSalt();
       const verificationPayload = isEmail
         ? user.verificationCode.email
         : user.verificationCode.telephoneNumber;
       // FIXME: Remove hard coded value
       if (verificationPayload === verificationCode || verificationCode === 0) {
         user = await crudService.update(
-          { password: utils.hash.makeHashValue(password) },
+          { password: utils.hash.makeHashValue(password, salt), salt },
           user.id,
           messages.userNotFound
         );

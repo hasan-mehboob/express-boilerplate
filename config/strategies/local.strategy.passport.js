@@ -12,15 +12,19 @@ module.exports = function () {
       },
       async (req, email, password, done) => {
         try {
-          let user = await models.Users.findOne({
+          const model = req.roleModel;
+          let user = await model.findOne({
             where: {
-              email: email,
+              email,
             },
+            attributes: ["password", "salt", "id"],
           });
-          if (!user || user.password !== utils.hash.makeHashValue(password)) {
+          if (
+            !user ||
+            user.password !== utils.hash.makeHashValue(password, user.salt)
+          ) {
             return done(null, false, { message: messages.invalidLogin });
           }
-
           return done(null, user);
         } catch (error) {
           return done(error);

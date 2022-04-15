@@ -11,7 +11,7 @@ let sequelize;
         ? process.env.DATABASE_URL
         : process.env.TEST_DATABASE_URL,
       {
-        logging: true,
+        logging: env !== "production",
       }
     );
     console.log("Connected to  database") + process.env.NODE_ENV;

@@ -218,6 +218,7 @@ let verifyCodePayloadValidation = [
     .notEmpty()
     .withMessage(messages.notEmpty),
 ];
+let getProfile = [param("id").optional()];
 
 let resendCodePayloadValidation = [
   param("id").exists(),
@@ -237,4 +238,5 @@ module.exports = {
   resendCodePayloadValidation,
   updatePayloadValidation,
   completeProfilePayloadValidation,
+  getProfile,
 };

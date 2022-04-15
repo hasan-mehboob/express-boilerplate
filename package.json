@@ -11,6 +11,8 @@
     "start": "node ./bootstrap.js",
     "dev": "nodemon ./bootstrap.js",
     "sequelize": "sequelize",
+    "seed:dev": "sequelize db:seed:all --env development",
+    "seed:undo:dev": "sequelize db:seed:undo --env development",
     "migrate:dev": "sequelize db:migrate --env development",
     "migrate:prod": "sequelize db:migrate --env production",
     "model:generate": "sequelize model:generate",

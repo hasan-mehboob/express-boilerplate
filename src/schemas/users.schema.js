@@ -3,6 +3,14 @@ const { Model } = require("sequelize");
 const { SIGNUP_STAGES } = require("../../config/constants");
 
 module.exports = (sequelize, DataTypes) => {
+  const excludedAttributes = [
+    "password",
+    "salt",
+    "deletedAt",
+    "createdAt",
+    "updatedAt",
+    "accessToken",
+  ];
   class Users extends Model {
     /**
      * Helper method for defining associations.
@@ -19,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
       lastName: { type: DataTypes.STRING },
       email: { type: DataTypes.STRING },
       password: {
+        type: DataTypes.STRING,
+      },
+      salt: {
         type: DataTypes.STRING,
       },
       profilePhoto: {
@@ -49,17 +60,29 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      defaultScope: {
+        attributes: {
+          exclude: excludedAttributes,
+        },
+      },
+      hooks: {
+        beforeUpdate: (record, options) => {
+          options.returning =
+            utils.filterAttributes.filter.includeAttributes(Users);
+        },
+        afterCreate: (record, options) => {
+          record = utils.filterAttributes.filter.excludeAttributes(
+            record,
+            excludedAttributes,
+            options?.includedAttributes ? options?.includedAttributes : []
+          );
+        },
+      },
       sequelize,
       modelName: "Users",
     }
   );
-  Users.excludedAttributes = [
-    "password",
-    "salt",
-    "createdAt",
-    "updatedAt",
-    "deletedAt",
-  ];
+  Users.excludedAttributes = excludedAttributes;
   Users.excludedAttributesFromRequest = [
     "createdAt",
     "updatedAt",
@@ -67,6 +90,5 @@ module.exports = (sequelize, DataTypes) => {
     "verificationCode",
     "codeExpiryTime",
   ];
-
   return Users;
 };
