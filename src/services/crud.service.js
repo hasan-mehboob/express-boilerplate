@@ -10,7 +10,10 @@ class CrudService {
   async update(payload, id, message) {
     let model = await this.model.update(
       { ...payload },
-      { where: { id }, returning: true }
+      {
+        where: { id },
+        individualHooks: true,
+      }
     );
     if (!model) {
       throw createError(404, message);

@@ -3,6 +3,14 @@ const { Model } = require("sequelize");
 const { SIGNUP_STAGES } = require("../../config/constants");
 
 module.exports = (sequelize, DataTypes) => {
+  const excludedAttributes = [
+    "password",
+    "salt",
+    "deletedAt",
+    "createdAt",
+    "updatedAt",
+    "accessToken",
+  ];
   class Users extends Model {
     /**
      * Helper method for defining associations.
@@ -52,22 +60,29 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      defaultScope: {
+        attributes: {
+          exclude: excludedAttributes,
+        },
+      },
+      hooks: {
+        beforeUpdate: (record, options) => {
+          options.returning =
+            utils.filterAttributes.filter.includeAttributes(Users);
+        },
+        afterCreate: (record, options) => {
+          record = utils.filterAttributes.filter.excludeAttributes(
+            record,
+            excludedAttributes,
+            options?.includedAttributes ? options?.includedAttributes : []
+          );
+        },
+      },
       sequelize,
       modelName: "Users",
     }
   );
-  Users.addHook("afterCreate", "exclude_attributes", (user, options) => {
-    user = utils.filterAttributes.filter.excludeAttributes(
-      user,
-      Users.excludedAttributes,
-      []
-    );
-  });
-  Users.excludedAttributes = [
-    "password",
-    "salt",
-    "deletedAt",
-  ];
+  Users.excludedAttributes = excludedAttributes;
   Users.excludedAttributesFromRequest = [
     "createdAt",
     "updatedAt",
@@ -75,6 +90,5 @@ module.exports = (sequelize, DataTypes) => {
     "verificationCode",
     "codeExpiryTime",
   ];
-
   return Users;
 };

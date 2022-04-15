@@ -6,7 +6,6 @@ const crudService = new services.CrudService(models.Users);
 exports.auth = {
   signUp: async (req, res, next) => {
     let { body: payload } = req;
-    payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
     try {
       payload.signupStage = constants.SIGNUP_STAGES.VERIFY_CODE;
       let Users = await authService.signUp(payload);
@@ -21,12 +20,14 @@ exports.auth = {
   },
   signIn: async (req, res, next) => {
     try {
-      const token = utils.token.getJWTToken(req.user);
-      req.user.dataValues.accessToken = token;
+      let { user } = req;
+      user = await models.Users.findByPk(user.id);
+      const token = utils.token.getJWTToken(user);
+      user.dataValues.accessToken = token;
       return res.json({
         status: 200,
         message: messages.signedIn,
-        data: req.user,
+        data: user,
       });
     } catch (err) {
       next(err);

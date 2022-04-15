@@ -17,6 +17,7 @@ module.exports = function () {
             where: {
               email,
             },
+            attributes: ["password", "salt", "id"],
           });
           if (
             !user ||
@@ -24,10 +25,6 @@ module.exports = function () {
           ) {
             return done(null, false, { message: messages.invalidLogin });
           }
-          user = utils.filterAttributes.excludeAttributes(
-            user,
-            model.excludedAttributes
-          );
           return done(null, user);
         } catch (error) {
           return done(error);

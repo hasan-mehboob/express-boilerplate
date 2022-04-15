@@ -5,7 +5,6 @@ exports.update = {
   updateUser: async (req, res, next) => {
     try {
       let { body: payload, user } = req;
-      payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
       if (
         payload.telephoneNumber &&
         payload.telephoneNumber !== user.telephoneNumber
@@ -43,7 +42,6 @@ exports.update = {
   completeProfile: async (req, res, next) => {
     try {
       let { body: payload, user } = req;
-      payload = _.omit(payload, models.Users.excludedAttributesFromRequest);
       const exsistingPhoneNumber = await models.Users.findOne({
         where: {
           telephoneNumber: payload.telephoneNumber,

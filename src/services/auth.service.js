@@ -4,7 +4,7 @@ class AuthService {
   }
 
   async signUp(payload) {
-    let user = await this.model.scope().findOne({
+    let user = await this.model.findOne({
       where: {
         email: payload.email,
       },
@@ -66,6 +66,7 @@ class AuthService {
       where: {
         id: user.id,
       },
+      individualHooks: true,
       returning: true,
     });
     return userIns[1][0];
