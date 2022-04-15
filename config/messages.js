@@ -6,7 +6,7 @@ module.exports = {
     return `${name} has been created successfully!`;
   },
   alreadyExist: (name) => {
-    return `${name} is already exsist!`;
+    return `${name} already exists!`;
   },
   signedIn: "You have been signed in successfully",
   updatedModel: (model) => {
