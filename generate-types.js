@@ -47,11 +47,9 @@ for (let schemaFile of utils.globalFile.getGlobbedFiles("./**/*.schema.js")) {
     models.Sequelize.DataTypes
   );
   schema &&
-    (types["models"][schema.name] = `typeof import("${schemaFile.replace(
-      ".js",
-      ""
-    )}")`);
-  // console.log(`${schema.modelName}: typeof import("${schemaFile}")`);
+    (types["models"][
+      schema.name
+    ] = `ReturnType<typeof import("${schemaFile.replace(".js", "")}")>`);
 }
 
 // MIDDLEWARES
@@ -198,6 +196,7 @@ var text = `declare global {
   var expressValidator: typeof import("express-validator");
   var sgMail: typeof import("@sendgrid/mail");
   var util: typeof import("util");
+  var Sequelize: typeof import("sequelize");
   var Op: typeof import("sequelize").Op;
   
   //MIDDLEWARES
@@ -224,7 +223,6 @@ var text = `declare global {
   var dataConstraint: typeof import("./config/data_constraints");
   var emailConstraints: typeof import("./config/emailConstraints");
   var constants: typeof import("./config/constants");
-  var digitOceanUrl: typeof import("../config/digital_ocean");
 }
 export {};
 `;
