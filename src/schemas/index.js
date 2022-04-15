@@ -6,7 +6,7 @@ const db = {};
 let sequelize;
 (async () => {
   try {
-    sequelize = new Sequelize(
+    sequelize = new Sequelize.Sequelize(
       env === "production"
         ? process.env.DATABASE_URL
         : process.env.TEST_DATABASE_URL,

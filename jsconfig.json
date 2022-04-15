@@ -2,8 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "checkJs": true,
-    "resolveJsonModule": true
+    "checkJs": true
   },
   "include": ["src/**/*", "config/**/*", "global.d.ts"]
 }
