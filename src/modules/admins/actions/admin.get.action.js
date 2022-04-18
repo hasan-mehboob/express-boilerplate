@@ -2,7 +2,7 @@ exports.get = {
   signIn: async (req, res, next) => {
     try {
       const { user: admin } = req;
-      const token = utils.token.getJWTToken(admin);
+      const token = utils.token.getJWTToken(admin, "admins");
       req.user.dataValues.accessToken = token;
       return res.json({
         status: 200,

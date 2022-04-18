@@ -22,7 +22,7 @@ exports.auth = {
     try {
       let { user } = req;
       user = await models.Users.findByPk(user.id);
-      const token = utils.token.getJWTToken(user);
+      const token = utils.token.getJWTToken(user, "users");
       user.dataValues.accessToken = token;
       return res.json({
         status: 200,
@@ -130,7 +130,7 @@ exports.auth = {
   },
   googleCb: async (req, res, next) => {
     const { user } = req;
-    const token = utils.token.getJWTToken(user);
+    const token = utils.token.getJWTToken(user, "users");
     let payload = {};
     if (token) {
       if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
@@ -156,7 +156,7 @@ exports.auth = {
   },
   facebookCb: async (req, res, next) => {
     const { user } = req;
-    const token = utils.token.getJWTToken(user);
+    const token = utils.token.getJWTToken(user, "users");
     let payload = {};
     if (token) {
       if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {

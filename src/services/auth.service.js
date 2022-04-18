@@ -27,7 +27,7 @@ class AuthService {
       userData,
       userData.verificationCode.email
     );
-    var token = utils.token.getJWTToken(userData);
+    var token = utils.token.getJWTToken(userData, "users");
     userData.dataValues.accessToken = token;
     return userData;
   }
@@ -129,7 +129,6 @@ class AuthService {
             ? userData?.verificationCode?.email
             : userData?.verificationCode?.telephoneNumber
         );
-      userData.token = utils.token.getJWTToken(userData);
       return userData;
     } catch (error) {
       throw createError(error);
