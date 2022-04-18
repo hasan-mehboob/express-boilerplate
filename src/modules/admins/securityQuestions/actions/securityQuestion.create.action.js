@@ -50,9 +50,8 @@ exports.post = {
         question: question.trim(),
         createdBy: admin.id,
       }));
-      const securityQuestions = await models.SecurityQuestions.bulkCreate(
-        payload
-      );
+      await models.SecurityQuestions.bulkCreate(payload);
+      const securityQuestions = await models.SecurityQuestions.findAll();
       return res.json({
         status: 200,
         message: messages.created("Security Questions"),
