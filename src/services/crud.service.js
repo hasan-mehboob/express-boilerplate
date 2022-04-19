@@ -8,7 +8,7 @@ class CrudService {
   }
 
   async update(payload, id, message) {
-    let model = await this.model.update(
+    const model = await this.model.update(
       { ...payload },
       {
         where: { id },
@@ -24,7 +24,7 @@ class CrudService {
   async updateVerification({ isEmail, id, message }) {
     const verificationCode = utils.random.generateRandomNumber();
     const codeExpiryTime = Date.now();
-    let model = await this.model.update(
+    const model = await this.model.update(
       {
         ...(isEmail
           ? {
@@ -49,7 +49,7 @@ class CrudService {
   }
 
   async getModelById(id, notFoundMessage) {
-    let model = await this.model.findByPk(id);
+    const model = await this.model.findByPk(id);
 
     if (!model) {
       throw createError(404, notFoundMessage);

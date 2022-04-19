@@ -4,7 +4,7 @@ class AuthService {
   }
 
   async signUp(payload) {
-    let user = await this.model.findOne({
+    const user = await this.model.findOne({
       where: {
         email: payload.email,
       },
@@ -47,7 +47,7 @@ class AuthService {
     if (!user) {
       throw createError(400, messages.userNotFound);
     }
-    let verificationCode = body.isEmail
+    const verificationCode = body.isEmail
       ? user.verificationCode.email
       : user.verificationCode.telephoneNumber;
     if (verificationCode !== body.code && body.code !== 0) {
@@ -73,7 +73,7 @@ class AuthService {
         signupStage: constants.SIGNUP_STAGES.COMPLETE_PROFILE,
       });
 
-    let userIns = await this.model.update(payload, {
+    const userIns = await this.model.update(payload, {
       where: {
         id: user.id,
       },
