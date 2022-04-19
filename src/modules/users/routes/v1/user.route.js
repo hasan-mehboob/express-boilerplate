@@ -1,6 +1,6 @@
 router
   .post(
-    "/users/auth/signUp",
+    "/users/auth/sign-up",
     validators.users.signUpPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
@@ -58,14 +58,14 @@ router
     actions.users.auth.facebookCb
   )
   .post(
-    "/users/auth/verify-code/:id",
+    "/users/auth/verify-code",
     validators.users.verifyCodePayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
     actions.users.auth.verifyCode
   )
   .post(
-    "/users/auth/resend-code/:id",
+    "/users/auth/resend-code",
     validators.users.resendCodePayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
@@ -86,7 +86,7 @@ router
     actions.users.auth.forgotPassword
   )
   .patch(
-    "/users/auth/reset-password/:id",
+    "/users/auth/reset-password",
     validators.users.resetPasswordPayload,
     middlewares.validation.request,
     middlewares.email_format.format,

@@ -180,7 +180,6 @@ let forgotPasswordPayloadValidation = [
 ];
 
 let resetPasswordPayload = [
-  param("id").exists(),
   body("code")
     .exists()
     .withMessage(messages.notPresent)
@@ -202,9 +201,12 @@ let resetPasswordPayload = [
     .withMessage(messages.notPresent)
     .notEmpty()
     .withMessage(messages.notEmpty),
+  body("countryCode")
+    .isNumeric()
+    .withMessage(messages.invalidDataType("Number"))
+    .optional(),
 ];
 let verifyCodePayloadValidation = [
-  param("id").exists(),
   body("code")
     .exists()
     .withMessage(messages.notPresent)
@@ -217,16 +219,23 @@ let verifyCodePayloadValidation = [
     .withMessage(messages.notPresent)
     .notEmpty()
     .withMessage(messages.notEmpty),
+  body("countryCode")
+    .isNumeric()
+    .withMessage(messages.invalidDataType("Number"))
+    .optional(),
 ];
 let getProfile = [param("id").optional()];
 
 let resendCodePayloadValidation = [
-  param("id").exists(),
   body("emailOrPhoneNumber")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()
     .withMessage(messages.notEmpty),
+  body("countryCode")
+    .isNumeric()
+    .withMessage(messages.invalidDataType("Number"))
+    .optional(),
 ];
 
 module.exports = {
