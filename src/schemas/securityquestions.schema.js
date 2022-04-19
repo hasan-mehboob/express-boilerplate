@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
+  const excludedAttributes = ["deletedAt", "createdAt", "updatedAt"];
   class SecurityQuestions extends Model {
     /**
      * Helper method for defining associations.
@@ -27,9 +28,24 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
+      defaultScope: {
+        attributes: {
+          exclude: excludedAttributes,
+        },
+      },
+      hooks: {
+        afterCreate: (record, options) => {
+          record = utils.filterAttributes.filter.excludeAttributes(
+            record,
+            excludedAttributes,
+            options?.includedAttributes ? options?.includedAttributes : []
+          );
+        },
+      },
       sequelize,
       modelName: "SecurityQuestions",
     }
   );
+  SecurityQuestions.excludedAttributes = excludedAttributes;
   return SecurityQuestions;
 };

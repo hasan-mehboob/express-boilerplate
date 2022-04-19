@@ -12,7 +12,7 @@ router
     actions.securityQuestions.post.bulkCreate
   )
   .get(
-    "/security-question/public/admins/",
+    "/security-question/public/",
     actions.securityQuestions.get.getQuestions
   );
 module.exports = { prefix: "security-question", router };

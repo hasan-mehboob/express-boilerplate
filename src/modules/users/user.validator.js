@@ -168,7 +168,7 @@ let signInPayloadValidation = [
     .withMessage(messages.invalidDataType("String")),
 ];
 let forgotPasswordPayloadValidation = [
-  body("userName")
+  body("emailOrPhoneNumber")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()
@@ -197,7 +197,7 @@ let resetPasswordPayload = [
     .withMessage(messages.invalidDataType("String"))
     .isLength({ min: dataConstraint.PASSWORD_MIN_LENGTH })
     .withMessage(messages.invalidLength),
-  body("userName")
+  body("emailOrPhoneNumber")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()
@@ -212,7 +212,7 @@ let verifyCodePayloadValidation = [
     .withMessage(messages.notEmpty)
     .isNumeric()
     .withMessage(messages.invalidDataType("Integer")),
-  body("userName")
+  body("emailOrPhoneNumber")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()
@@ -222,7 +222,7 @@ let getProfile = [param("id").optional()];
 
 let resendCodePayloadValidation = [
   param("id").exists(),
-  body("userName")
+  body("emailOrPhoneNumber")
     .exists()
     .withMessage(messages.notPresent)
     .notEmpty()

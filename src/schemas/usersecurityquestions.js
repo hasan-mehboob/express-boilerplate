@@ -1,14 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  const excludedAttributes = [
-    "password",
-    "salt",
-    "deletedAt",
-    "createdAt",
-    "updatedAt",
-  ];
-  class Admins extends Model {
+  class UserSecurityQuestions extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -18,32 +11,33 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Admins.init(
+  UserSecurityQuestions.init(
     {
-      salt: {
-        type: Sequelize.STRING,
+      userId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
       },
-      email: {
-        type: DataTypes.STRING,
+      questionId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
+        references: {
+          model: "SecurityQuestions",
+          key: "id",
+        },
       },
-      password: {
+      answer: {
         type: DataTypes.STRING,
         allowNull: false,
       },
     },
     {
-      defaultScope: {
-        attributes: {
-          exclude: excludedAttributes,
-        },
-      },
       sequelize,
-      modelName: "Admins",
+      modelName: "UserSecurityQuestions",
     }
   );
-  Admins.excludedAttributes = excludedAttributes;
-  return Admins;
+  return UserSecurityQuestions;
 };
