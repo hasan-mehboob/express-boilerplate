@@ -3,7 +3,9 @@ exports.post = {
     try {
       const {
         body: { questionId, answer },
+        user,
       } = req;
+
       const securityQuestion = await models.SecurityQuestions.findOne({
         where: {
           id: questionId,
@@ -11,8 +13,17 @@ exports.post = {
       });
       if (!securityQuestion)
         return next(createError(404, messages.notFound("question")));
+      const prevUserSecurityQues = await models.UserSecurityQuestions.findOne({
+        where: {
+          userId: user.id,
+          questionId: questionId,
+        },
+      });
+      if (prevUserSecurityQues)
+        return next(createError(400, messages.alreadyExist("question")));
       const userSecurityQuestion = await models.UserSecurityQuestions.create({
         questionId: questionId,
+        userId: user.id,
         answer: utils.hash.makeHashValue(answer),
       });
       return res.json({
