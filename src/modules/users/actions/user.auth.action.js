@@ -5,10 +5,10 @@ const crudService = new services.CrudService(models.Users);
 
 exports.auth = {
   signUp: async (req, res, next) => {
-    let { body: payload } = req;
+    const { body: payload } = req;
     try {
       payload.signupStage = constants.SIGNUP_STAGES.VERIFY_CODE;
-      let Users = await authService.signUp(payload);
+      const Users = await authService.signUp(payload);
       return res.json({
         status: 200,
         message: messages.created("Users"),
@@ -36,9 +36,9 @@ exports.auth = {
 
   verifyCode: async (req, res, next) => {
     try {
-      let { body: payload } = req;
+      const { body: payload } = req;
       payload.code = parseInt(req.body.code);
-      let user = await authService.verifyCode(payload);
+      const user = await authService.verifyCode(payload);
       return res.json({
         status: 200,
         message: messages.verified,
@@ -52,7 +52,7 @@ exports.auth = {
   resendCode: async (req, res, next) => {
     try {
       const { body } = req;
-      let user = await authService.resendCode(body, crudService);
+      const user = await authService.resendCode(body, crudService);
 
       return res.json({
         status: 200,
@@ -65,7 +65,7 @@ exports.auth = {
   },
   forgotPassword: async (req, res, next) => {
     try {
-      let { body: payload } = req;
+      const { body: payload } = req;
       let user = await crudService.getModelByUserName(payload);
       user = await authService.verification({
         isEmail: payload.isEmail,

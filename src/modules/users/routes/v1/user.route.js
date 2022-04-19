@@ -1,6 +1,6 @@
 router
   .post(
-    "/users/auth/signUp",
+    "/users/auth/sign-up",
     validators.users.signUpPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
