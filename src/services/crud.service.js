@@ -61,10 +61,10 @@ class CrudService {
       where: {
         [Op.or]: [
           {
-            email: payload.userName,
+            email: payload.emailOrPhoneNumber,
           },
           {
-            telephoneNumber: payload.userName,
+            telephoneNumber: payload.emailOrPhoneNumber,
             countryCode: payload.countryCode,
           },
         ],
