@@ -59,15 +59,14 @@ class CrudService {
   async getModelByUserName(payload) {
     const user = await this.model.findOne({
       where: {
-        [Op.or]: [
-          {
-            email: payload.emailOrPhoneNumber,
-          },
-          {
-            telephoneNumber: payload.emailOrPhoneNumber,
-            countryCode: payload.countryCode,
-          },
-        ],
+        ...(payload.isEmail
+          ? {
+              email: payload.emailOrPhoneNumber,
+            }
+          : {
+              telephoneNumber: payload.emailOrPhoneNumber,
+              countryCode: payload.countryCode,
+            }),
       },
     });
 

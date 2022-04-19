@@ -31,19 +31,30 @@ class AuthService {
     userData.dataValues.accessToken = token;
     return userData;
   }
-  async verifyCode(id, code, isEmail) {
-    const user = await this.model.findByPk(id);
+  async verifyCode(body) {
+    const user = await this.model.findOne({
+      where: {
+        ...(body.isEmail
+          ? {
+              email: body.emailOrPhoneNumber,
+            }
+          : {
+              telephoneNumber: body.emailOrPhoneNumber,
+              countryCode: body.countryCode,
+            }),
+      },
+    });
     if (!user) {
       throw createError(400, messages.userNotFound);
     }
-    let verificationCode = isEmail
+    let verificationCode = body.isEmail
       ? user.verificationCode.email
       : user.verificationCode.telephoneNumber;
-    if (verificationCode !== code && code !== 0) {
+    if (verificationCode !== body.code && body.code !== 0) {
       throw createError(400, messages.invalidCode);
     }
     const payload = {};
-    if (isEmail)
+    if (body.isEmail)
       Object.assign(payload, {
         isVerified: {
           email: true,
@@ -72,14 +83,25 @@ class AuthService {
     return userIns[1][0];
   }
 
-  async resendCode(id, isEmail, crudService) {
+  async resendCode(payload, crudService) {
     let user = await this.model.findOne({
       where: {
-        id,
+        ...(payload.isEmail
+          ? {
+              email: payload.emailOrPhoneNumber,
+            }
+          : {
+              telephoneNumber: payload.emailOrPhoneNumber,
+              countryCode: payload.countryCode,
+            }),
       },
     });
     if (!user) return createError(messages.userNotFound);
-    user = await this.verification({ isEmail, user, crudService });
+    user = await this.verification({
+      isEmail: payload.isEmail,
+      user,
+      crudService,
+    });
     return user;
   }
   async verification({ isEmail, user, crudService }) {

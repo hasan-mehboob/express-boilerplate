@@ -36,13 +36,9 @@ exports.auth = {
 
   verifyCode: async (req, res, next) => {
     try {
-      let {
-        body: { code, isEmail },
-        params: { id },
-      } = req;
-      code = parseInt(req.body.code);
-
-      let user = await authService.verifyCode(id, code, isEmail);
+      let { body: payload } = req;
+      payload.code = parseInt(req.body.code);
+      let user = await authService.verifyCode(payload);
       return res.json({
         status: 200,
         message: messages.verified,
@@ -55,11 +51,8 @@ exports.auth = {
 
   resendCode: async (req, res, next) => {
     try {
-      const {
-        body: { isEmail },
-        params: { id },
-      } = req;
-      let user = await authService.resendCode(id, isEmail, crudService);
+      const { body } = req;
+      let user = await authService.resendCode(body, crudService);
 
       return res.json({
         status: 200,
@@ -91,11 +84,21 @@ exports.auth = {
   resetPassword: async (req, res, next) => {
     try {
       const {
-        body: { code, password, isEmail },
-        params: { id },
+        body: { code, emailOrPhoneNumber, countryCode, password, isEmail },
       } = req;
       const verificationCode = parseInt(code);
-      let user = await models.Users.findByPk(id);
+      let user = await models.Users.findOne({
+        where: {
+          ...(isEmail
+            ? {
+                email: emailOrPhoneNumber,
+              }
+            : {
+                telephoneNumber: emailOrPhoneNumber,
+                countryCode: countryCode,
+              }),
+        },
+      });
       if (!user) {
         throw createError(400, messages.userNotFound);
       }
