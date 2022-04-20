@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
   Users.init(
     {
       firstName: DataTypes.STRING,
+      fullName: { type: DataTypes.STRING },
       lastName: { type: DataTypes.STRING },
+      gender: { type: DataTypes.ENUM("male", "female") },
+
       email: { type: DataTypes.STRING },
       password: {
         type: DataTypes.STRING,
@@ -58,6 +61,22 @@ module.exports = (sequelize, DataTypes) => {
       fcmToken: {
         type: DataTypes.STRING,
       },
+      dob: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      meritalStatus: {
+        type: DataTypes.ENUM("single", "married", "divorced"),
+      },
+      noOfChildern: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      zipCode: DataTypes.INTEGER,
+      state: DataTypes.STRING,
+      city: DataTypes.STRING,
+      country: DataTypes.STRING,
+      street: DataTypes.STRING,
     },
     {
       defaultScope: {

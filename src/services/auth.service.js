@@ -3,7 +3,7 @@ class AuthService {
     this.model = model;
   }
 
-  async signUp(payload) {
+  async signUp(payload, req) {
     const user = await this.model.findOne({
       where: {
         email: payload.email,
@@ -29,6 +29,13 @@ class AuthService {
     );
     var token = utils.token.getJWTToken(userData, "users");
     userData.dataValues.accessToken = token;
+    const agent = useragent.parse(req.headers["user-agent"]);
+    await models.UserDevices.create({
+      userId: userData.id,
+      deviceType: agent.os.toString(),
+      requestHeaders: JSON.stringify(agent),
+      deviceIdentifier: token,
+    });
     return userData;
   }
   async verifyCode(body) {
