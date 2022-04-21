@@ -19,10 +19,8 @@ module.exports = function () {
             },
             attributes: ["password", "salt", "id"],
           });
-          if (
-            !user ||
-            user.password !== utils.hash.makeHashValue(password, user.salt)
-          ) {
+          const { hash } = utils.hash.makeHashValue(password, user.salt);
+          if (!user || user.password !== hash) {
             return done(null, false, { message: messages.invalidLogin });
           }
           return done(null, user);

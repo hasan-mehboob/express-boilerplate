@@ -20,10 +20,12 @@ module.exports = async (req, res, next) => {
     });
     if (prevUserSecurityQues)
       return next(createError(400, messages.alreadyExist("question")));
+    const { hash, salt } = utils.hash.makeHashValue(answer);
     const userSecurityQuestion = await models.UserSecurityQuestions.create({
       questionId: questionId,
       userId: user.id,
-      answer: utils.hash.makeHashValue(answer),
+      answer: hash,
+      salt,
     });
     return res.json({
       status: 200,

@@ -21,13 +21,13 @@ router
     middlewares.request_validation.requestValidation("Users"),
     actions.users.patch.completeProfile
   )
-  .get(
+  .post(
     "/users/auth/login",
     validators.users.signInPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
     middlewares.local_passport.authenticate,
-    actions.users.get.login
+    actions.users.post.login
   )
   .get(
     "/users/auth/logout",

@@ -1,10 +1,10 @@
 module.exports = async (req, res, next) => {
   try {
-    const NewsLetterSubscribers = await models.NewsLetterSubscribers.findAll();
+    const newsLetterSubscribers = await models.NewsLetterSubscribers.findAll();
     return res.json({
       status: 200,
       message: messages.success,
-      data: NewsLetterSubscribers,
+      data: newsLetterSubscribers,
     });
   } catch (error) {
     next(error);

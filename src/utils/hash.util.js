@@ -3,5 +3,8 @@ exports.makeHashValue = (text, salt) => {
   if (!salt) salt = utils.salt.generateSalt();
   const hmac = crypto.createHmac(algorithm, salt);
   hmac.update(text);
-  return hmac.digest("hex");
+  return {
+    hash: hmac.digest("hex"),
+    salt,
+  };
 };

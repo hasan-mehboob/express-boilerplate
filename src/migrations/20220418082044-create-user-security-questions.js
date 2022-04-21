@@ -24,6 +24,10 @@ module.exports = {
           key: "id",
         },
       },
+      salt: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       answer: {
         type: Sequelize.STRING,
         allowNull: false,

@@ -19,9 +19,9 @@ class AuthService {
         telephoneNumber: null,
       },
     };
-    const salt = utils.salt.generateSalt();
+    const { hash, salt } = utils.hash.makeHashValue(payload.password);
     payload.salt = salt;
-    payload["password"] = utils.hash.makeHashValue(payload.password, salt);
+    payload["password"] = hash;
     const userData = await this.model.create(payload);
     await libs.email_service.sendVerificationCode(
       userData,

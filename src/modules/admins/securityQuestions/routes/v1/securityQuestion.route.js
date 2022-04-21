@@ -11,5 +11,5 @@ router
     middlewares.validation.request,
     actions.securityQuestions.post.bulkCreate
   )
-  .get("/security-question/public/", actions.securityQuestions.get.get);
+  .get("/security-question/public/", actions.securityQuestions.get.getList);
 module.exports = { prefix: "security-question", router };

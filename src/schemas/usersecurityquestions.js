@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
+  const excludedAttributes = ["salt", "deletedAt", "createdAt", "updatedAt"];
   class UserSecurityQuestions extends Model {
     /**
      * Helper method for defining associations.
@@ -9,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.SecurityQuestions, {
+        foreignKey: "questionId",
+      });
     }
   }
   UserSecurityQuestions.init(
@@ -29,15 +33,39 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
+      salt: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       answer: {
         type: DataTypes.STRING,
         allowNull: false,
       },
     },
     {
+      defaultScope: {
+        attributes: {
+          exclude: excludedAttributes,
+        },
+      },
+      hooks: {
+        beforeUpdate: (record, options) => {
+          options.returning = utils.filterAttributes.filter.includeAttributes(
+            UserSecurityQuestions
+          );
+        },
+        afterCreate: (record, options) => {
+          record = utils.filterAttributes.filter.excludeAttributes(
+            record,
+            excludedAttributes,
+            options?.includedAttributes ? options?.includedAttributes : []
+          );
+        },
+      },
       sequelize,
       modelName: "UserSecurityQuestions",
     }
   );
+  UserSecurityQuestions.excludedAttributes = excludedAttributes;
   return UserSecurityQuestions;
 };
