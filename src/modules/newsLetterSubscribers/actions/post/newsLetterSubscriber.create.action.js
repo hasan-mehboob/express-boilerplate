@@ -1,4 +1,4 @@
-exports.createNewsLetterSubscriber = async (req, res, next) => {
+module.exports = async (req, res, next) => {
   const { body: payload } = req;
   try {
     const prevNewsLetterSubscriber = await models.NewsLetterSubscribers.findOne(

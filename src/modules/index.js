@@ -4,13 +4,18 @@
 global["actions"] = {};
 for (let actionFile of utils.globalFile.getGlobbedFiles("./**/*.action.js")) {
   const filePathArr = actionFile.split("/");
-  const moduleName = filePathArr[filePathArr.length - 3];
+  const moduleName = filePathArr[filePathArr.length - 4];
+  const requestName = filePathArr[filePathArr.length - 2];
+  const fileName = filePathArr[filePathArr.length - 1].split(".")[1];
   const actions = require(path.resolve(`${actionFile}`));
-  if (global["actions"][moduleName]) {
-    Object.assign(global["actions"][moduleName], actions);
-  } else {
-    global["actions"][moduleName] = actions;
-  }
+  global["actions"][moduleName] = {
+    ...(global["actions"]?.[moduleName] && global["actions"]?.[moduleName]),
+    [requestName]: {
+      ...(global["actions"][moduleName]?.[requestName] &&
+        global["actions"][moduleName]?.[requestName]),
+      [fileName]: actions,
+    },
+  };
 }
 global["validators"] = {};
 for (let validatorFile of utils.globalFile.getGlobbedFiles(
