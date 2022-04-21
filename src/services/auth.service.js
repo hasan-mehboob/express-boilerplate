@@ -29,13 +29,7 @@ class AuthService {
     );
     var token = utils.token.getJWTToken(userData, "users");
     userData.dataValues.accessToken = token;
-    const agent = useragent.parse(req.headers["user-agent"]);
-    await models.UserDevices.create({
-      userId: userData.id,
-      deviceType: agent.os.toString(),
-      requestHeaders: JSON.stringify(agent),
-      deviceIdentifier: token,
-    });
+    helpers.userDevices.create({ ...req, user: userData });
     return userData;
   }
   async verifyCode(body) {

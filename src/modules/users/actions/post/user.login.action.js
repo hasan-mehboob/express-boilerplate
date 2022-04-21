@@ -4,20 +4,9 @@ module.exports = async (req, res, next) => {
     user = await models.Users.findByPk(user.id);
     const token = utils.token.getJWTToken(user, "users");
     user.dataValues.accessToken = token;
-    const agent = useragent.parse(req.headers["user-agent"]);
-    const userDevice = await models.UserDevices.findOne({
-      where: {
-        userId: user.id,
-        deviceType: agent.os.toString(),
-      },
-    });
-    if (!userDevice)
-      await models.UserDevices.create({
-        userId: user.id,
-        deviceType: agent.os.toString(),
-        requestHeaders: JSON.stringify(agent),
-        deviceIdentifier: token,
-      });
+    const userDevice = await helpers.userDevices.get(req);
+    if (!userDevice) helpers.userDevices.create({ ...req, user });
+    else helpers.userDevices.update({ ...req, user });
     return res.json({
       status: 200,
       message: messages.signedIn,
