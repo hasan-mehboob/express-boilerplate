@@ -13,6 +13,7 @@
     "sequelize": "sequelize",
     "seed:dev": "sequelize db:seed:all --env development",
     "seed:prod": "sequelize db:seed:all --env production",
+    "seed:prod:undo": "sequelize db:seed:undo --env production",
     "seed:undo:dev": "sequelize db:seed:undo --env development",
     "migrate:dev": "sequelize db:migrate --env development",
     "migrate:prod": "sequelize db:migrate --env production",
