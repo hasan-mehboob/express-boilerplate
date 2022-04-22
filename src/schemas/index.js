@@ -14,6 +14,7 @@ let sequelize;
         logging: env !== "production",
       }
     );
+    await sequelize.authenticate();
     console.log("Connected to  database") + process.env.NODE_ENV;
   } catch (error) {
     console.error(error);
