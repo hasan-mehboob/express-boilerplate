@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "postdeploy": "yarn run migrate:dev"
+      "postdeploy": "yarn run migrate:prod && yarn run seed:prod"
     }
   }
 }
