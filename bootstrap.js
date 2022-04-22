@@ -29,7 +29,6 @@ require("./src/server");
 
 require("./config/constants");
 
-require("./app.json");
 /**
  *  start server
  */
