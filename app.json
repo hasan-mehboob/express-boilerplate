@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "dokku": {
+      "postdeploy": "touch /app/predeploy.test"
+    }
+  }
+}
