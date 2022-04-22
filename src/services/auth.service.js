@@ -29,7 +29,7 @@ class AuthService {
     );
     var token = utils.token.getJWTToken(userData, "users");
     userData.dataValues.accessToken = token;
-    helpers.userDevices.create({ ...req, user: userData });
+    await helpers.userDevices.create({ ...req, user: userData });
     return userData;
   }
   async verifyCode(body) {

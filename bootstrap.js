@@ -11,6 +11,11 @@ require("./src/global-package");
 
 require("./src/utils");
 /**
+ * Add helpers globally
+ */
+
+require("./src/helpers");
+/**
  * Add Lib globally
  */
 require("./src/libs");
