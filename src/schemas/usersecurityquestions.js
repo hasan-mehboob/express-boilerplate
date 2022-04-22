@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) => {
           record = utils.filterAttributes.filter.excludeAttributes(
             record,
             excludedAttributes,
-            options?.includedAttributes ? options?.includedAttributes : []
+            options?.includedAttributes ?? []
           );
         },
       },
