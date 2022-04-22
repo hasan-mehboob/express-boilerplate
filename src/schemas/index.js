@@ -15,7 +15,7 @@ let sequelize;
       }
     );
     await sequelize.authenticate();
-    console.log("Connected to  database") + process.env.NODE_ENV;
+    console.log("✅ Connected to  database " + env);
   } catch (error) {
     console.error(error);
     process.exit(1);
