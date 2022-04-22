@@ -3,7 +3,7 @@ class AuthService {
     this.model = model;
   }
 
-  async signUp(payload) {
+  async signUp(payload, req) {
     const user = await this.model.findOne({
       where: {
         email: payload.email,
@@ -19,9 +19,9 @@ class AuthService {
         telephoneNumber: null,
       },
     };
-    const salt = utils.salt.generateSalt();
+    const { hash, salt } = utils.hash.makeHashValue(payload.password);
     payload.salt = salt;
-    payload["password"] = utils.hash.makeHashValue(payload.password, salt);
+    payload["password"] = hash;
     const userData = await this.model.create(payload);
     await libs.email_service.sendVerificationCode(
       userData,
@@ -29,6 +29,7 @@ class AuthService {
     );
     var token = utils.token.getJWTToken(userData, "users");
     userData.dataValues.accessToken = token;
+    helpers.userDevices.create({ ...req, user: userData });
     return userData;
   }
   async verifyCode(body) {

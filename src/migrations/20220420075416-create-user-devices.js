@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("UserSecurityQuestions", {
+    await queryInterface.createTable("UserDevices", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,27 +10,15 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: "Users",
           key: "id",
         },
       },
-      questionId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "SecurityQuestions",
-          key: "id",
-        },
-      },
-      salt: {
+      requestHeaders: Sequelize.TEXT,
+      deviceIdentifier: Sequelize.STRING,
+      deviceType: {
         type: Sequelize.STRING,
-        allowNull: false,
-      },
-      answer: {
-        type: Sequelize.STRING,
-        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +31,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("UserSecurityQuestions");
+    await queryInterface.dropTable("UserDevices");
   },
 };

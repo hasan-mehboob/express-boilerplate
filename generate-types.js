@@ -37,7 +37,7 @@ let types = {
   libs: {},
   helpers: {},
   actions: {},
-  validator: {},
+  validators: {},
 };
 
 // SCHEMA
@@ -123,21 +123,42 @@ fs.readdirSync(__dirname + helpersDir)
 // ACTIONS
 for (let actionFile of utils.globalFile.getGlobbedFiles("./**/*.action.js")) {
   const filePathArr = actionFile.split("/");
-  const moduleName = filePathArr[filePathArr.length - 3];
+  const moduleName = filePathArr[filePathArr.length - 4];
+  const requestName = filePathArr[filePathArr.length - 2];
+  const fileName = filePathArr[filePathArr.length - 1].split(".")[1];
   const actions = require(path.resolve(`${actionFile}`));
-  for (const action in actions) {
+  if (typeof actions === "object")
+    for (const action in actions) {
+      types.actions = {
+        ...types.actions,
+        [moduleName]: {
+          ...types.actions?.[moduleName],
+          [requestName]: {
+            ...types.actions?.[moduleName]?.[requestName],
+            [fileName]: {
+              ...types.actions?.[moduleName]?.[requestName]?.[fileName],
+              [action]: `typeof import("./${path.join(
+                actionFile.replace(".js", "")
+              )}").${action}`,
+            },
+          },
+        },
+      };
+    }
+  else
     types.actions = {
       ...types.actions,
       [moduleName]: {
-        ...types.actions[moduleName],
-        [action]: `typeof import("./${path.join(
-          actionFile.replace(".js", "")
-        )}").${action}`,
+        ...types.actions?.[moduleName],
+        [requestName]: {
+          ...types.actions?.[moduleName]?.[requestName],
+          [fileName]: `typeof import("./${path.join(
+            actionFile.replace(".js", "")
+          )}")`,
+        },
       },
     };
-  }
 }
-
 // VALIDATORS
 let files = utils.globalFile.getGlobbedFiles("./**/*.validator.js");
 for (let validatorFile of files) {
@@ -155,10 +176,10 @@ for (let validatorFile of files) {
   });
   if (greaterThan1) {
     for (const validator in validators) {
-      types.validator = {
-        ...types.validator,
+      types.validators = {
+        ...types.validators,
         [moduleName]: {
-          ...types.validator[moduleName],
+          ...types.validators[moduleName],
           [validator]: `typeof import("./${path.join(
             validatorFile.replace(".js", "")
           )}").${validator}`,
@@ -166,8 +187,8 @@ for (let validatorFile of files) {
       };
     }
   } else {
-    types.validator = {
-      ...types.validator,
+    types.validators = {
+      ...types.validators,
       [moduleName]: `typeof import("./${path.join(
         validatorFile.replace(".js", "")
       )}")`,
@@ -207,7 +228,7 @@ var text = `declare global {
   var models: ${convertToCode(types.models)};
   
   // VALIDATORS
-  var validator: ${convertToCode(types.validator)};
+  var validators: ${convertToCode(types.validators)};
   
   // ACTIONS
   var actions: ${convertToCode(types.actions)};

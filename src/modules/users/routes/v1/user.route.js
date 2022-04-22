@@ -5,7 +5,7 @@ router
     middlewares.validation.request,
     middlewares.email_format.format,
     middlewares.request_validation.requestValidation("Users"),
-    actions.users.auth.signUp
+    actions.users.post.signup
   )
   .get(
     "/users/get-profile/:id?",
@@ -19,15 +19,20 @@ router
     middlewares.validation.request,
     middlewares.email_format.format,
     middlewares.request_validation.requestValidation("Users"),
-    actions.users.update.completeProfile
+    actions.users.patch.completeProfile
   )
-  .get(
+  .post(
     "/users/auth/login",
     validators.users.signInPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
     middlewares.local_passport.authenticate,
-    actions.users.auth.signIn
+    actions.users.post.login
+  )
+  .get(
+    "/users/auth/logout",
+    middlewares.validation.request,
+    actions.users.get.logout
   )
   .patch(
     "/users/update",
@@ -35,7 +40,7 @@ router
     middlewares.email_format.format,
     middlewares.request_validation.requestValidation("Users"),
     middlewares.validation.request,
-    actions.users.update.updateUser
+    actions.users.patch.update
   )
   .get(
     "/users/auth/google",
@@ -46,7 +51,7 @@ router
   .get(
     "/users/auth/google/callback",
     passport.authenticate("google", { session: false }),
-    actions.users.auth.googleCb
+    actions.users.get.googleCb
   )
   .get(
     "/users/auth/facebook",
@@ -55,42 +60,42 @@ router
   .get(
     "/users/auth/facebook/callback",
     passport.authenticate("facebook", { session: false }),
-    actions.users.auth.facebookCb
+    actions.users.get.facebookCb
   )
   .post(
     "/users/auth/verify-code",
     validators.users.verifyCodePayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
-    actions.users.auth.verifyCode
+    actions.users.post.verifyCode
   )
   .post(
     "/users/auth/resend-code",
     validators.users.resendCodePayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
-    actions.users.auth.resendCode
+    actions.users.post.resendCode
   )
   .patch(
     "/users/auth/forgot-password",
     validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
-    actions.users.auth.forgotPassword
+    actions.users.patch.forgotPassword
   )
   .patch(
     "/users/auth/verify-account",
     validators.users.forgotPasswordPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
-    actions.users.auth.forgotPassword
+    actions.users.patch.forgotPassword
   )
   .patch(
     "/users/auth/reset-password",
     validators.users.resetPasswordPayload,
     middlewares.validation.request,
     middlewares.email_format.format,
-    actions.users.auth.resetPassword
+    actions.users.patch.resetPassword
   );
 
 module.exports = { prefix: "users", router };
