@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: "CASCADE",
       },
-      tranasportUid: {
+      transportUid: {
         type: DataTypes.STRING,
       },
     },
