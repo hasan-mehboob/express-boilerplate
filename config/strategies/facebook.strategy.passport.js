@@ -36,7 +36,7 @@ module.exports = function (passportName) {
 
           var user = await model.findOne({
             where: {
-              transportUid: profile.id,
+              email: profile.emails[0].value,
             },
           });
           if (!user) {

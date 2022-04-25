@@ -19,6 +19,17 @@ module.exports = async (req, res, next) => {
           email: true,
         },
       });
+    const userDevice = await helpers.userDevices.get(req);
+    if (!userDevice)
+      await helpers.userDevices.create({
+        ...req,
+        user: { id: user.id, token },
+      });
+    else
+      await helpers.userDevices.update({
+        ...req,
+        user: { id: user.id, token },
+      });
     await crudService.update(payload, user.id, messages.userNotFound);
     res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
   } else {
