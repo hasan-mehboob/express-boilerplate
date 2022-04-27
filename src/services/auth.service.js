@@ -27,10 +27,23 @@ class AuthService {
       userData,
       userData.verificationCode.email
     );
-    var token = utils.token.getJWTToken(userData, "users");
-    userData.dataValues.accessToken = token;
-    await helpers.userDevices.create({ ...req, user: userData });
-    return userData;
+    var { accessToken, refreshToken } = models.Users.getjwtToken({
+      user: userData,
+    });
+    await models.RefreshTokens.create({
+      userId: userData.id,
+      modelType: "Users",
+      token: refreshToken,
+    });
+    await helpers.userDevices.create({
+      ...req,
+      user: { id: userData.id, accessToken },
+    });
+    return {
+      data: userData,
+      accessToken,
+      refreshToken,
+    };
   }
   async verifyCode(body) {
     const user = await this.model.findOne({

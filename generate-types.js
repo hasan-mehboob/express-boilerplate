@@ -211,7 +211,7 @@ var text = `declare global {
   var passportLocal: typeof import("passport-local");
   var passportJWT: typeof import("passport-jwt");
   var crypto: typeof import("crypto");
-  var JWT: typeof import("jsonwebtoken");
+  var jwt: typeof import("jsonwebtoken");
   var bodyParser: typeof import("body-parser");
   var cors: typeof import("cors");
   var expressValidator: typeof import("express-validator");
@@ -244,6 +244,7 @@ var text = `declare global {
   var dataConstraint: typeof import("./config/data_constraints");
   var emailConstraints: typeof import("./config/emailConstraints");
   var constants: typeof import("./config/constants");
+  var auth: typeof import("./config/auth");
 }
 export {};
 `;

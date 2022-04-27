@@ -1,9 +1,9 @@
 const crudService = new services.CrudService(models.Users);
 module.exports = async (req, res, next) => {
   const { user } = req;
-  const token = utils.token.getJWTToken(user, "users");
+  const { accessToken } = models.Users.getjwtToken(user);
   let payload = {};
-  if (token) {
+  if (accessToken) {
     if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
       Object.assign(payload, {
         signupStage: constants.SIGNUP_STAGES.COMPLETE_PROFILE,
@@ -23,15 +23,17 @@ module.exports = async (req, res, next) => {
     if (!userDevice)
       await helpers.userDevices.create({
         ...req,
-        user: { id: user.id, token },
+        user: { id: user.id, token: accessToken },
       });
     else
       await helpers.userDevices.update({
         ...req,
-        user: { id: user.id, token },
+        user: { id: user.id, token: accessToken },
       });
     await crudService.update(payload, user.id, messages.userNotFound);
-    res.redirect(process.env.FRONTEND_URL + "/auth/callback?token=" + token);
+    res.redirect(
+      process.env.FRONTEND_URL + "/auth/callback?token=" + accessToken
+    );
   } else {
     throw createError(400, messages.badRequest);
   }
