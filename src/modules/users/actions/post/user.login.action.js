@@ -1,8 +1,14 @@
 module.exports = async (req, res, next) => {
   try {
-    let { user } = req;
+    let {
+      user,
+      body: { remember_me },
+    } = req;
     user = await models.Users.findByPk(user.id);
-    const { accessToken, refreshToken } = models.Users.getjwtToken({ user });
+    const { accessToken, refreshToken } = models.Users.getjwtToken({
+      user,
+      remember_me,
+    });
     const userDevice = await helpers.userDevices.get(req);
     if (!userDevice)
       await helpers.userDevices.create({

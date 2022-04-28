@@ -8,7 +8,7 @@ var session = require("express-session");
 app.use(session({ secret: "SECRET", resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 global.messages = require("../config/messages");
 global.emailConstraints = require("../config/emailConstraints");
