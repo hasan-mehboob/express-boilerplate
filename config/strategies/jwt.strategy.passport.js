@@ -38,7 +38,15 @@ module.exports = function () {
             token: refreshToken,
             secret: auth.refreshToken.secret,
           });
-          if (!verify)
+          const prevRefreshToken = await models.RefreshTokens.findOne({
+            where: {
+              userId: jwt_payload.id,
+              modelType:
+                roleModel[jwt_payload.model].tableName ??
+                req.roleModel.tableName,
+            },
+          });
+          if (!verify || prevRefreshToken.token !== refreshToken)
             done({ status: 401, message: messages.InvalidToken }, null);
           let customError = {
             message: "Invalid Token",
@@ -50,12 +58,8 @@ module.exports = function () {
             model = roleModel[jwt_payload.model];
           }
           let user = await model.findByPk(jwt_payload.id);
-          user
-            ? done(null, {
-                ...user,
-                tableName: model.tableName,
-              })
-            : done(customError, false);
+          user.tableName = model.tableName;
+          user ? done(null, user) : done(customError, false);
         }
       } catch (error) {
         done(error, false);

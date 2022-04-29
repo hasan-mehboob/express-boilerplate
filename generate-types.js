@@ -212,6 +212,8 @@ var text = `declare global {
   var passportJWT: typeof import("passport-jwt");
   var crypto: typeof import("crypto");
   var jwt: typeof import("jsonwebtoken");
+  var jwt_decode: typeof import("jwt-decode");
+  var moment: typeof import("moment");
   var bodyParser: typeof import("body-parser");
   var cors: typeof import("cors");
   var expressValidator: typeof import("express-validator");

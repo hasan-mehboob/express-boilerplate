@@ -30,6 +30,7 @@ class AuthService {
     var { accessToken, refreshToken } = models.Users.getjwtToken({
       user: userData,
     });
+    userData.dataValues.accessToken = accessToken;
     await models.RefreshTokens.create({
       userId: userData.id,
       modelType: "Users",
@@ -41,7 +42,6 @@ class AuthService {
     });
     return {
       data: userData,
-      accessToken,
       refreshToken,
     };
   }

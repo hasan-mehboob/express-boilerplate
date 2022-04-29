@@ -1,20 +1,28 @@
 module.exports = async (req, res, next) => {
   try {
     const { user } = req;
-    const { accessToken } = await models[user?.tableName].getjwtToken({ user });
-    utils.cookie.setCookies({
-      res,
-      cookies: [
-        {
-          cookieName: "accessToken",
-          value: accessToken,
-        },
-      ],
+    const refreshTokenData = await models.RefreshTokens.findOne({
+      where: {
+        userId: user.id,
+        modelType: user?.tableName,
+      },
     });
+    let decoded = jwt_decode(refreshTokenData.token);
+    const timeDiff = moment(decoded.exp * 1000).diff(moment(), "minutes");
+    const { accessToken, refreshToken } = await models[
+      user?.tableName
+    ].getjwtToken({ user });
     return res.json({
       status: 200,
       message: messages.success,
-      data: null,
+      data: {
+        accessToken,
+        ...(Date.now() <= decoded.exp * 1000 && timeDiff > 0 && timeDiff <= 1
+          ? {
+              refreshToken,
+            }
+          : null),
+      },
     });
   } catch (error) {
     next(error);

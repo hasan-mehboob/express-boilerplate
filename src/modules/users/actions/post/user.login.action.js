@@ -9,6 +9,31 @@ module.exports = async (req, res, next) => {
       user,
       remember_me,
     });
+    const prevRefreshToken = await models.RefreshTokens.findOne({
+      where: {
+        userId: user.id,
+        modelType: "Users",
+      },
+    });
+    if (!prevRefreshToken)
+      await models.RefreshTokens.create({
+        userId: user.id,
+        modelType: "Users",
+        token: refreshToken,
+      });
+    else
+      await models.RefreshTokens.update(
+        {
+          token: refreshToken,
+        },
+        {
+          where: {
+            userId: user.id,
+            modelType: "Users",
+          },
+        }
+      );
+    user.dataValues.accessToken = accessToken;
     const userDevice = await helpers.userDevices.get(req);
     if (!userDevice)
       await helpers.userDevices.create({
@@ -23,10 +48,6 @@ module.exports = async (req, res, next) => {
     utils.cookie.setCookies({
       res,
       cookies: [
-        {
-          cookieName: "accessToken",
-          value: accessToken,
-        },
         {
           cookieName: "refreshToken",
           value: refreshToken,

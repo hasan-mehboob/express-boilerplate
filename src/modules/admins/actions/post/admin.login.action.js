@@ -1,10 +1,14 @@
 module.exports = async (req, res, next) => {
   try {
     const { user: admin } = req;
-    const { accessToken, refreshToken } = models.Admins.getjwtToken(admin);
+    const { accessToken, refreshToken } = models.Admins.getjwtToken({
+      user: admin,
+    });
+    req.user.dataValues.accessToken = accessToken;
     const prevRefreshToken = await models.RefreshTokens.findOne({
       where: {
         userId: admin.id,
+        modelType: "Admins",
       },
     });
     if (!prevRefreshToken)
@@ -16,10 +20,6 @@ module.exports = async (req, res, next) => {
     utils.cookie.setCookies({
       res,
       cookies: [
-        {
-          cookieName: "accessToken",
-          value: accessToken,
-        },
         {
           cookieName: "refreshToken",
           value: refreshToken,
