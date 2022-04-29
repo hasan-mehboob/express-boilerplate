@@ -96,7 +96,6 @@ router
     middlewares.validation.request,
     middlewares.email_format.format,
     actions.users.patch.resetPassword
-  )
-  .get("/users/getAccessToken", actions.commons.get.getAccessToken);
+  );
 
 module.exports = { prefix: "users", router };

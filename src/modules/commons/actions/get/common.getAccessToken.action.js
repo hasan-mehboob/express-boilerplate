@@ -1,7 +1,7 @@
 module.exports = async (req, res, next) => {
   try {
     const { user } = req;
-    const { accessToken } = await models.Users.getjwtToken({ user });
+    const { accessToken } = await models[user?.tableName].getjwtToken({ user });
     utils.cookie.setCookies({
       res,
       cookies: [

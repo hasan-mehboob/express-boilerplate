@@ -28,6 +28,18 @@ module.exports = function () {
             done({ status: 401, message: messages.InvalidToken }, null);
           });
         } else {
+          const refreshToken = req.cookies.refreshToken;
+          if (!refreshToken)
+            done(
+              { status: 404, message: messages.notFound("Refresh Token") },
+              null
+            );
+          const verify = await utils.token.verifyToken({
+            token: refreshToken,
+            secret: auth.refreshToken.secret,
+          });
+          if (!verify)
+            done({ status: 401, message: messages.InvalidToken }, null);
           let customError = {
             message: "Invalid Token",
             status: 401,
@@ -38,7 +50,12 @@ module.exports = function () {
             model = roleModel[jwt_payload.model];
           }
           let user = await model.findByPk(jwt_payload.id);
-          user ? done(null, user) : done(customError, false);
+          user
+            ? done(null, {
+                ...user,
+                tableName: model.tableName,
+              })
+            : done(customError, false);
         }
       } catch (error) {
         done(error, false);

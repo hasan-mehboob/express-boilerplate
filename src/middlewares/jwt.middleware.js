@@ -10,6 +10,15 @@ router.use(function (req, res, next) {
       isChecked = 1;
     }
   }
+  if (!req.roleModel) {
+    try {
+      const jwtPayload = utils.token.verifyToken({
+        token: req.cookies.accessToken,
+        secret: auth.accessToken.secret,
+      });
+      req.roleModel = roleModel[jwtPayload.model];
+    } catch (error) {}
+  }
 
   passport.authenticate("jwt", { session: false }, function (err, user, info) {
     if (err || !user) {
