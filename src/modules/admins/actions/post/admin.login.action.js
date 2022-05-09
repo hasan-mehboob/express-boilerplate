@@ -17,6 +17,18 @@ module.exports = async (req, res, next) => {
         modelType: "Admins",
         token: refreshToken,
       });
+    else
+      await models.RefreshTokens.update(
+        {
+          token: refreshToken,
+        },
+        {
+          where: {
+            userId: admin.id,
+            modelType: "Admins",
+          },
+        }
+      );
     utils.cookie.setCookies({
       res,
       cookies: [

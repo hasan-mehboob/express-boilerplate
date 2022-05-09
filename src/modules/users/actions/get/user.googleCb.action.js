@@ -1,7 +1,7 @@
 const crudService = new services.CrudService(models.Users);
 module.exports = async (req, res, next) => {
   const { user } = req;
-  const { accessToken } = models.Users.getjwtToken(user);
+  const { accessToken, refreshToken } = models.Users.getjwtToken({ user });
   let payload = {};
   if (accessToken) {
     if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
@@ -32,7 +32,11 @@ module.exports = async (req, res, next) => {
       });
     await crudService.update(payload, user.id, messages.userNotFound);
     res.redirect(
-      process.env.FRONTEND_URL + "/auth/callback?token=" + accessToken
+      process.env.FRONTEND_URL +
+        "/auth/callback?token=" +
+        accessToken +
+        "&refreshToken=" +
+        refreshToken
     );
   } else {
     throw createError(400, messages.badRequest);

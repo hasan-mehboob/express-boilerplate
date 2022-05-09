@@ -10,11 +10,6 @@ const opts = { passReqToCallback: true, secretOrKey: JWTSECRET };
 module.exports = function () {
   opts.jwtFromRequest = function (request) {
     var token = null;
-    // if (request.header("authorization")) {
-    //   token = request.header("authorization").trim().split(" ").pop();
-    // } else if (request.query.jwtToken) {
-    //   token = request.query.jwtToken;
-    // }
     if (request.cookies.accessToken) token = request.cookies.accessToken;
     request.jwtToken = token;
     return token;
