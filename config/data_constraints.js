@@ -10,5 +10,5 @@ module.exports = {
   CODE_EXPIRY_TIME: oneHour,
   PAGINATION_LIMIT: 10,
   CURRENT_PAGE: 1,
-  isValidNumber: /^\d+$/,
+  IS_VALID_NUMBER_REGEX: /^\d+$/,
 };

@@ -11,6 +11,11 @@ module.exports = async (req, res, next) => {
       return next(createError(404, messages.notFound("Refresh Token")));
     let decoded = jwtDecode(user.refreshToken);
     const timeDiff = moment(decoded.exp * 1000).diff(moment(), "minutes");
+    const accessTokenExpiry = dataConstraint.IS_VALID_NUMBER_REGEX.test(
+      auth.accessToken.expiry
+    )
+      ? parseInt(auth.accessToken.expiry) / 60
+      : parseInt(auth.accessToken.expiry);
     const { accessToken, refreshToken } = await models[
       user?.tableName
     ].getjwtToken({ user });
@@ -19,7 +24,9 @@ module.exports = async (req, res, next) => {
       message: messages.success,
       data: {
         accessToken,
-        ...(Date.now() <= decoded.exp * 1000 && timeDiff > 0 && timeDiff <= 1
+        ...(Date.now() <= decoded.exp * 1000 &&
+        timeDiff > 0 &&
+        timeDiff <= accessTokenExpiry
           ? {
               refreshToken,
             }

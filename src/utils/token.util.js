@@ -1,6 +1,6 @@
 exports.getJWTToken = function ({ secret, expiry, payload }) {
   return jwt.sign(payload, secret, {
-    expiresIn: dataConstraint.isValidNumber.test(expiry)
+    expiresIn: dataConstraint.IS_VALID_NUMBER_REGEX.test(expiry)
       ? parseInt(expiry)
       : expiry,
   });
