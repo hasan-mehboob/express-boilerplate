@@ -6,7 +6,7 @@ const auth = {
   refreshToken: {
     secret: process.env.JWTSECRET,
     expiry: process.env.REFRESH_TOKEN_EXPIRY,
-    remember_me_expiry: process.env.REFRESH_TOKEN_REMEMBER_ME_EXPIRY,
+    rememberMeExpiry: process.env.REFRESH_TOKEN_REMEMBER_ME_EXPIRY,
   },
 };
 module.exports = auth;

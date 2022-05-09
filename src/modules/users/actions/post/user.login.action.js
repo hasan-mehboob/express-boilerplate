@@ -9,13 +9,13 @@ module.exports = async (req, res, next) => {
       user,
       remember_me,
     });
-    const prevRefreshToken = await models.RefreshTokens.findOne({
+    const userRefreshToken = await models.RefreshTokens.findOne({
       where: {
         userId: user.id,
         modelType: "Users",
       },
     });
-    if (!prevRefreshToken)
+    if (!userRefreshToken)
       await models.RefreshTokens.create({
         userId: user.id,
         modelType: "Users",

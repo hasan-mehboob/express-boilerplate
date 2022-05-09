@@ -5,13 +5,13 @@ module.exports = async (req, res, next) => {
       user: admin,
     });
     req.user.dataValues.accessToken = accessToken;
-    const prevRefreshToken = await models.RefreshTokens.findOne({
+    const adminRefreshToken = await models.RefreshTokens.findOne({
       where: {
         userId: admin.id,
         modelType: "Admins",
       },
     });
-    if (!prevRefreshToken)
+    if (!adminRefreshToken)
       await models.RefreshTokens.create({
         userId: admin.id,
         modelType: "Admins",

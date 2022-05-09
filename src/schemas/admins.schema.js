@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
     const refreshToken = utils.token.getJWTToken({
       secret: auth.refreshToken.secret,
       expiry: remember_me
-        ? auth.refreshToken.remember_me_expiry
+        ? auth.refreshToken.rememberMeExpiry
         : auth.refreshToken.expiry,
       payload,
     });

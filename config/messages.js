@@ -1,7 +1,7 @@
 module.exports = {
   generalError: "Something went wrong.",
   invalidLogin: "Invalid email or password",
-  InvalidToken: "Invalid token.",
+  invalidToken: "Invalid token.",
   created: (name) => {
     return `${name} has been created successfully!`;
   },

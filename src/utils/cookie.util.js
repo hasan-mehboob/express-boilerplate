@@ -7,7 +7,7 @@ exports.setCookies = ({ res, cookies }) => {
           }
         : {
             maxAge: remember_me
-              ? parseInt(auth.refreshToken.remember_me_expiry) * 1000
+              ? parseInt(auth.refreshToken.rememberMeExpiry) * 1000
               : parseInt(auth.refreshToken.expiry) * 1000,
           }),
       path: "/",

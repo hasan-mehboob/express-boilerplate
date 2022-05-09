@@ -3,11 +3,11 @@ const roleModel = {
   admins: models.Admins,
 };
 router.use(function (req, res, next) {
-  let isModelExist = 0;
+  let doesModelExist = 0;
   for (let route in roleModel) {
-    if (req.path.search(`${route}/`) != -1 && !isModelExist) {
+    if (req.path.search(`${route}/`) != -1 && !doesModelExist) {
       req.roleModel = roleModel[route];
-      isModelExist = 1;
+      doesModelExist = 1;
     }
   }
 
