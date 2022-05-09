@@ -29,10 +29,10 @@ router
     middlewares.local_passport.authenticate,
     actions.users.post.login
   )
-  .get(
+  .post(
     "/users/auth/logout",
     middlewares.validation.request,
-    actions.users.get.logout
+    actions.users.post.logout
   )
   .patch(
     "/users/update",

@@ -1,11 +1,10 @@
 module.exports = async (req, res, next) => {
   try {
     const { user } = req;
-    const agent = useragent.parse(req.headers["user-agent"]);
-    await models.UserDevices.destroy({
+    await models.RefreshTokens.destroy({
       where: {
+        modelType: "Admins",
         userId: user.id,
-        deviceType: agent.os.toString(),
       },
     });
     res.json({
