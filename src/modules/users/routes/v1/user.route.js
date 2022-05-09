@@ -51,7 +51,7 @@ router
   .get(
     "/users/auth/google/callback",
     passport.authenticate("google", { session: false }),
-    actions.users.get.googleCb
+    actions.users.get.socialsCb
   )
   .get(
     "/users/auth/facebook",
@@ -60,7 +60,7 @@ router
   .get(
     "/users/auth/facebook/callback",
     passport.authenticate("facebook", { session: false }),
-    actions.users.get.facebookCb
+    actions.users.get.socialsCb
   )
   .post(
     "/users/auth/verify-code",

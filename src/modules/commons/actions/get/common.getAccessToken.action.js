@@ -7,7 +7,9 @@ module.exports = async (req, res, next) => {
         modelType: user?.tableName,
       },
     });
-    let decoded = jwt_decode(refreshTokenData.token);
+    if (!refreshTokenData)
+      return next(createError(404, messages.notFound("Refresh Token")));
+    let decoded = jwtDecode(user.refreshToken);
     const timeDiff = moment(decoded.exp * 1000).diff(moment(), "minutes");
     const { accessToken, refreshToken } = await models[
       user?.tableName

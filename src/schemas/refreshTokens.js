@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      salt: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       modelType: {
         type: DataTypes.ENUM("Users", "Admins"),
         allowNull: false,

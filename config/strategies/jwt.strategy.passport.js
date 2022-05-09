@@ -28,10 +28,6 @@ module.exports = function () {
               { status: 404, message: messages.notFound("Refresh Token") },
               null
             );
-          const verify = await utils.token.verifyToken({
-            token: refreshToken,
-            secret: auth.refreshToken.secret,
-          });
           const userRefreshToken = await models.RefreshTokens.findOne({
             where: {
               userId: jwtPayload.id,
@@ -40,7 +36,15 @@ module.exports = function () {
                 req.roleModel.tableName,
             },
           });
-          if (!verify || userRefreshToken.token !== refreshToken)
+          const verify = utils.token.verifyToken({
+            token: refreshToken,
+            secret: auth.refreshToken.secret,
+          });
+          if (
+            !verify ||
+            utils.hash.makeHashValue(refreshToken, userRefreshToken.salt)
+              .hash !== userRefreshToken.token
+          )
             done({ status: 401, message: messages.invalidToken }, null);
           let customError = {
             message: messages.invalidToken,
@@ -53,6 +57,7 @@ module.exports = function () {
           }
           let user = await model.findByPk(jwtPayload.id);
           user.tableName = model.tableName;
+          user.refreshToken = refreshToken;
           user ? done(null, user) : done(customError, false);
         }
       } catch (error) {

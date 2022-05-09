@@ -15,16 +15,19 @@ module.exports = async (req, res, next) => {
         modelType: "Users",
       },
     });
+    const { hash, salt } = utils.hash.makeHashValue(refreshToken);
     if (!userRefreshToken)
       await models.RefreshTokens.create({
         userId: user.id,
         modelType: "Users",
-        token: refreshToken,
+        token: hash,
+        salt,
       });
     else
       await models.RefreshTokens.update(
         {
-          token: refreshToken,
+          token: hash,
+          salt,
         },
         {
           where: {

@@ -11,16 +11,19 @@ module.exports = async (req, res, next) => {
         modelType: "Admins",
       },
     });
+    const { hash, salt } = utils.hash.makeHashValue(refreshToken);
     if (!adminRefreshToken)
       await models.RefreshTokens.create({
         userId: admin.id,
         modelType: "Admins",
-        token: refreshToken,
+        salt,
+        token: hash,
       });
     else
       await models.RefreshTokens.update(
         {
-          token: refreshToken,
+          token: hash,
+          salt,
         },
         {
           where: {

@@ -31,10 +31,13 @@ class AuthService {
       user: userData,
     });
     userData.dataValues.accessToken = accessToken;
+    const { hash: refreshTokenHash, salt: refreshTokenSalt } =
+      utils.hash.makeHashValue(refreshToken);
     await models.RefreshTokens.create({
       userId: userData.id,
       modelType: "Users",
-      token: refreshToken,
+      token: refreshTokenHash,
+      salt: refreshTokenSalt,
     });
     await helpers.userDevices.create({
       ...req,
