@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const auth = require("../../config/auth");
+
 module.exports = (sequelize, DataTypes) => {
   const excludedAttributes = [
     "password",
@@ -16,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasOne(models.RefreshTokens, {
+        foreignKey: "userId",
+      });
     }
   }
   Admins.init(
@@ -45,5 +50,28 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Admins.excludedAttributes = excludedAttributes;
+  Admins.getjwtToken = ({ user, rememberMe = false }) => {
+    const payload = { id: user.id };
+    const accessToken = utils.token.getJWTToken({
+      secret: auth.accessToken.secret,
+      expiry: auth.accessToken.expiry,
+      payload: {
+        ...payload,
+        email: user.email,
+        model: "users",
+      },
+    });
+    const refreshToken = utils.token.getJWTToken({
+      secret: auth.refreshToken.secret,
+      expiry: rememberMe
+        ? auth.refreshToken.rememberMeExpiry
+        : auth.refreshToken.expiry,
+      payload,
+    });
+    return {
+      accessToken,
+      refreshToken,
+    };
+  };
   return Admins;
 };

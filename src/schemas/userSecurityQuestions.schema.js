@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       salt: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       answer: {

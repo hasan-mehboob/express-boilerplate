@@ -9,34 +9,55 @@ const opts = { passReqToCallback: true, secretOrKey: JWTSECRET };
 
 module.exports = function () {
   opts.jwtFromRequest = function (request) {
-    var token = null;
-    if (request.header("authorization")) {
-      token = request.header("authorization").trim().split(" ").pop();
-    } else if (request.query.jwtToken) {
-      token = request.query.jwtToken;
-    }
-    request.jwtToken = token;
-    return token;
+    if (request.cookies.accessToken)
+      request.jwtToken = request.cookies.accessToken;
+    return request.cookies.accessToken;
   };
 
   passport.use(
-    new JwtStrategy(opts, async (req, jwt_payload, done) => {
+    new JwtStrategy(opts, async (req, jwtPayload, done) => {
       try {
-        if (!jwt_payload.id) {
+        if (!jwtPayload.id || !jwtPayload.model || !jwtPayload.email) {
           process.nextTick(function () {
-            done({ status: 401, message: messages.InvalidToken }, null);
+            done({ status: 401, message: messages.invalidToken }, null);
           });
         } else {
+          const refreshToken = req.cookies.refreshToken;
+          if (!refreshToken)
+            done(
+              { status: 404, message: messages.notFound("Refresh Token") },
+              null
+            );
+          const userRefreshToken = await models.RefreshTokens.findOne({
+            where: {
+              userId: jwtPayload.id,
+              modelType:
+                roleModel[jwtPayload.model].tableName ??
+                req.roleModel.tableName,
+            },
+          });
+          const verify = utils.token.verifyToken({
+            token: refreshToken,
+            secret: auth.refreshToken.secret,
+          });
+          if (
+            !verify ||
+            utils.hash.makeHashValue(refreshToken, userRefreshToken.salt)
+              .hash !== userRefreshToken.token
+          )
+            done({ status: 401, message: messages.invalidToken }, null);
           let customError = {
-            message: "Invalid Token",
+            message: messages.invalidToken,
             status: 401,
           };
 
           let model = req.roleModel;
-          if (jwt_payload.model && !model) {
-            model = roleModel[jwt_payload.model];
+          if (jwtPayload.model && !model) {
+            model = roleModel[jwtPayload.model];
           }
-          let user = await model.findByPk(jwt_payload.id);
+          let user = await model.findByPk(jwtPayload.id);
+          user.tableName = model.tableName;
+          user.refreshToken = refreshToken;
           user ? done(null, user) : done(customError, false);
         }
       } catch (error) {

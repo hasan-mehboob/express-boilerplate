@@ -166,6 +166,11 @@ let signInPayloadValidation = [
     .withMessage(messages.invalidLength)
     .isString()
     .withMessage(messages.invalidDataType("String")),
+  body("rememberMe")
+    .isBoolean()
+    .withMessage(messages.invalidDataType("Boolean"))
+    .optional()
+    .default(false),
 ];
 let forgotPasswordPayloadValidation = [
   body("emailOrPhoneNumber")

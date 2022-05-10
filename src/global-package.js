@@ -28,3 +28,5 @@ global.util = require("util");
 global.axios = require("axios").default;
 global.sentry = require("@sentry/node");
 global.useragent = require("useragent");
+global.jwtDecode = require("jwt-decode");
+global.moment = require("moment");
