@@ -2,40 +2,18 @@ module.exports = async (req, res, next) => {
   try {
     let {
       user,
-      body: { remember_me },
+      body: { rememberMe },
     } = req;
     user = await models.Users.findByPk(user.id);
     const { accessToken, refreshToken } = models.Users.getjwtToken({
       user,
-      remember_me,
+      rememberMe,
     });
-    const userRefreshToken = await models.RefreshTokens.findOne({
-      where: {
-        userId: user.id,
-        modelType: "Users",
-      },
+    helpers.refreshTokens.createOrUpdateRefreshToken({
+      user,
+      modelType: "Users",
+      refreshToken,
     });
-    const { hash, salt } = utils.hash.makeHashValue(refreshToken);
-    if (!userRefreshToken)
-      await models.RefreshTokens.create({
-        userId: user.id,
-        modelType: "Users",
-        token: hash,
-        salt,
-      });
-    else
-      await models.RefreshTokens.update(
-        {
-          token: hash,
-          salt,
-        },
-        {
-          where: {
-            userId: user.id,
-            modelType: "Users",
-          },
-        }
-      );
     user.dataValues.accessToken = accessToken;
     const userDevice = await helpers.userDevices.get(req);
     if (!userDevice)

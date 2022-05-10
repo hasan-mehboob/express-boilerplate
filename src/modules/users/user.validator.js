@@ -166,7 +166,7 @@ let signInPayloadValidation = [
     .withMessage(messages.invalidLength)
     .isString()
     .withMessage(messages.invalidDataType("String")),
-  body("remember_me")
+  body("rememberMe")
     .isBoolean()
     .withMessage(messages.invalidDataType("Boolean"))
     .optional()

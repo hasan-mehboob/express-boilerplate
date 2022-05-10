@@ -112,7 +112,7 @@ module.exports = (sequelize, DataTypes) => {
     "verificationCode",
     "codeExpiryTime",
   ];
-  Users.getjwtToken = ({ user, remember_me = false }) => {
+  Users.getjwtToken = ({ user, rememberMe = false }) => {
     const payload = { id: user.id };
     const accessToken = utils.token.getJWTToken({
       secret: auth.accessToken.secret,
@@ -125,7 +125,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     const refreshToken = utils.token.getJWTToken({
       secret: auth.refreshToken.secret,
-      expiry: remember_me
+      expiry: rememberMe
         ? auth.refreshToken.rememberMeExpiry
         : auth.refreshToken.expiry,
       payload,

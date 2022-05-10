@@ -3,37 +3,15 @@ module.exports = async (req, res, next) => {
   const { user } = req;
   const { accessToken, refreshToken } = models.Users.getjwtToken({
     user,
-    remember_me: true,
+    rememberMe: true,
   });
   let payload = {};
   if (accessToken) {
-    const userRefreshToken = await models.RefreshTokens.findOne({
-      where: {
-        userId: user.id,
-        modelType: "Users",
-      },
+    helpers.refreshTokens.createOrUpdateRefreshToken({
+      user,
+      refreshToken,
+      modelType: "Users",
     });
-    const { hash, salt } = utils.hash.makeHashValue(refreshToken);
-    if (!userRefreshToken)
-      await models.RefreshTokens.create({
-        userId: user.id,
-        modelType: "Users",
-        salt,
-        token: hash,
-      });
-    else
-      await models.RefreshTokens.update(
-        {
-          token: hash,
-          salt,
-        },
-        {
-          where: {
-            userId: user.id,
-            modelType: "Users",
-          },
-        }
-      );
     if (user.signupStage !== constants.SIGNUP_STAGES.SUCCESS) {
       Object.assign(payload, {
         signupStage: constants.SIGNUP_STAGES.COMPLETE_PROFILE,
