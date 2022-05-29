@@ -12,8 +12,10 @@ module.exports = {
     from: EMAIL_FROM,
     subject: "Subscribe",
     html: `
-    Thanks for Subscribing!<br><br>
-    We will let you know when app is ready <br><br>
+    Welcome on board!<br><br>
+    We are building something great for your one-stop solution to preserving your digital legacy and you’ll be the first ones to know when we roll out.
+    <br><br>
+
 
 <br>
 <br>
