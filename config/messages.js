@@ -40,7 +40,7 @@ module.exports = {
   invalidDataType: (val) => {
     return `Please provide valid ${val}!`;
   },
-  emailExists: "Email already exists!",
+  emailExists: "You have already signed up",
   telephoneNumberExists: "Mobile phone number already exists!",
   sessionExpiry: "Session has been expired!",
   updateAttr: (attr) => {
