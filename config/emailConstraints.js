@@ -1,4 +1,8 @@
-const { SENDGRID_APIKEY, EMAIL_FROM } = process.env;
+const {
+  EMAIL_FROM,
+  DEFAULT_ADMIN_EMAIL,
+  SENDGRID_TEMPLATE_ID: templateId,
+} = process.env;
 
 module.exports = {
   verificationCode: ({ user, verificationCode }) => ({
@@ -10,19 +14,7 @@ module.exports = {
   commingSoonLeads: ({ user }) => ({
     to: user.email,
     from: EMAIL_FROM,
-    subject: "Subscribe",
-    html: `
-    Welcome on board!<br><br>
-    We are building something great for your one-stop solution to preserving your digital legacy and you’ll be the first ones to know when we roll out.
-    <br><br>
-
-
-<br>
-<br>
-Thanks,
-<br><br>
-
-Your Legacy Suite team
-        `,
+    bcc: [DEFAULT_ADMIN_EMAIL],
+    templateId,
   }),
 };
