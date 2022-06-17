@@ -4,6 +4,7 @@
 global.express = require("express");
 global.app = express();
 global.router = express.Router();
+global.axios = require("axios");
 global.createError = require("http-errors");
 global.cookieParser = require("cookie-parser");
 global.logger = require("morgan");
