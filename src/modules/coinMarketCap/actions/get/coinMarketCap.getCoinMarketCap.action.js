@@ -6,7 +6,11 @@ module.exports = async (req, res, next) => {
       url: COIN_MARKET_CAP_URL,
     };
     const data = await axios(options);
-    return data;
+    return res.json({
+      status: 200,
+      message: messages.success,
+      data: data.data,
+    });
   } catch (error) {
     next(error);
   }
