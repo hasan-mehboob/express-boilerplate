@@ -1,4 +1,5 @@
 "use strict";
+const { USER_ROLE } = constants;
 const { Model } = require("sequelize");
 const { SIGNUP_STAGES } = require("../../config/constants");
 const auth = require("../../config/auth");
@@ -101,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       sequelize,
-      modelName: "Users",
+      modelName: USER_ROLE.USER,
     }
   );
   Users.excludedAttributes = excludedAttributes;
@@ -120,7 +121,7 @@ module.exports = (sequelize, DataTypes) => {
       payload: {
         ...payload,
         email: user.email,
-        model: "users",
+        model: USER_ROLE.USER,
       },
     });
     const refreshToken = utils.token.getJWTToken({
