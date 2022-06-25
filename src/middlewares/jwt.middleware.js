@@ -17,6 +17,7 @@ router.use(function (req, res, next) {
   }
 
   passport.authenticate("jwt", { session: false }, function (err, user, info) {
+    req.user = user;
     if (err || !user) {
       if (
         utils.isObjInArray(constants.PUBLIC_ROUTES, {
@@ -33,7 +34,6 @@ router.use(function (req, res, next) {
         next(createError(401, errMsg));
       }
     } else {
-      req.user = user;
       next();
     }
   })(req, res, next);
