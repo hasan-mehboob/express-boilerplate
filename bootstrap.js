@@ -42,5 +42,5 @@ require("./bin/www");
  * Generate types for globals
  */
 if (process.env.NODE_ENV != "production") {
-  require("./generate-types");
+  require("./generateTypes");
 }
