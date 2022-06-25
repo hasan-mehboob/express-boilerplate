@@ -28,8 +28,7 @@ module.exports = function () {
           const userRefreshToken = await models.RefreshTokens.findOne({
             where: {
               userId: jwtPayload.id,
-              modelType:
-                models[jwtPayload.model].tableName ?? req.roleModel.tableName,
+              modelType: models[jwtPayload.model].tableName,
             },
           });
           const verify = utils.token.verifyToken({
@@ -50,8 +49,6 @@ module.exports = function () {
           let model;
           if (jwtPayload.model) {
             model = models[jwtPayload.model];
-          } else if (req.roleModel) {
-            model = req.roleModel;
           } else {
             done(customError, false);
           }
