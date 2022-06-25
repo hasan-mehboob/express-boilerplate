@@ -1,6 +1,7 @@
+const { USER_ROLE } = constants;
 const roleModel = {
-  users: models.Users,
-  admins: models.Admins,
+  users: models[USER_ROLE.USER],
+  admins: models[USER_ROLE.ADMIN],
 };
 router.use(function (req, res, next) {
   let doesModelExist = 0;

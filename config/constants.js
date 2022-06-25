@@ -18,6 +18,10 @@ const constants = {
     COMPLETE_PROFILE: "completeProfile",
     SUCCESS: "success",
   },
+  USER_ROLE: {
+    USER: "Users",
+    ADMIN: "Admins",
+  },
 };
 module.exports = constants;
 
