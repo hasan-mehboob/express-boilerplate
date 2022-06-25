@@ -26,7 +26,7 @@ router
     validators.users.signInPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
-    middlewares.local_passport.authenticate,
+    middlewares.localPassport.authenticate,
     actions.users.post.login
   )
   .post(

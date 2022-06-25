@@ -4,7 +4,7 @@ router
     validators.admins.loginPayloadValidation,
     middlewares.validation.request,
     middlewares.email_format.format,
-    middlewares.local_passport.authenticate,
+    middlewares.localPassport.authenticate,
     actions.admins.post.login
   )
   .post(
