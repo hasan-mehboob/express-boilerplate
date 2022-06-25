@@ -6,6 +6,11 @@ require("dotenv").config();
  */
 require("./src/global-package");
 /**
+ * Add constants
+ */
+
+require("./config/constants");
+/**
  * Add Util globally
  */
 
@@ -28,12 +33,6 @@ require("./config/db");
  */
 
 require("./src/server");
-/**
- * Add constants
- */
-
-require("./config/constants");
-
 /**
  *  start server
  */
