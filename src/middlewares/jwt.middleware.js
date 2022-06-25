@@ -5,6 +5,10 @@ const roleModel = {
 };
 router.use(function (req, res, next) {
   let doesModelExist = 0;
+  // This field is used in Signup/Login Strategies to authenticate the user
+  // according to his route
+  // e.g if someone makes a request on /users/auth/login route then he will be
+  // authenticated according to the users value in roleModel which is models.Users
   for (let route in roleModel) {
     if (req.path.search(`/${route}`) != -1 && !doesModelExist) {
       req.roleModel = roleModel[route];
