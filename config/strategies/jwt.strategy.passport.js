@@ -1,9 +1,6 @@
 const { Strategy: JwtStrategy, ExtractJwt } = passportJWT;
 const { JWTSECRET } = process.env;
-const roleModel = {
-  users: models.Users,
-  admins: models.Admins,
-};
+
 ExtractJwt.fromBodyField("token");
 const opts = { passReqToCallback: true, secretOrKey: JWTSECRET };
 
@@ -32,8 +29,7 @@ module.exports = function () {
             where: {
               userId: jwtPayload.id,
               modelType:
-                roleModel[jwtPayload.model].tableName ??
-                req.roleModel.tableName,
+                models[jwtPayload.model].tableName ?? req.roleModel.tableName,
             },
           });
           const verify = utils.token.verifyToken({
@@ -51,10 +47,15 @@ module.exports = function () {
             status: 401,
           };
 
-          let model = req.roleModel;
-          if (jwtPayload.model && !model) {
-            model = roleModel[jwtPayload.model];
+          let model;
+          if (jwtPayload.model) {
+            model = models[jwtPayload.model];
+          } else if (req.roleModel) {
+            model = req.roleModel;
+          } else {
+            done(customError, false);
           }
+
           let user = await model.findByPk(jwtPayload.id);
           user.tableName = model.tableName;
           user.refreshToken = refreshToken;

@@ -6,7 +6,7 @@ const roleModel = {
 router.use(function (req, res, next) {
   let doesModelExist = 0;
   for (let route in roleModel) {
-    if (req.path.search(`${route}/`) != -1 && !doesModelExist) {
+    if (req.path.search(`/${route}`) != -1 && !doesModelExist) {
       req.roleModel = roleModel[route];
       doesModelExist = 1;
     }
