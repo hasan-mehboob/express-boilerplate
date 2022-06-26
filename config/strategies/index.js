@@ -9,6 +9,11 @@ for (let strategy of utils.globalFile.getGlobbedFiles("./**/*.passport.js")) {
   // }
   else if (strategy.search("local") > -1) {
     require(path.resolve(strategy))("local");
+    require(path.resolve(strategy))(
+      "local-graphql",
+      "variables[email]",
+      "variables[password]"
+    );
   } else if (strategy.search("jwt") > -1) {
     require(path.resolve(strategy))("jwt");
   }

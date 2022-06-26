@@ -1,13 +1,18 @@
 "use strict";
 
 const { Strategy: LocalStrategy } = passportLocal;
-module.exports = function () {
+module.exports = function (
+  passportName = "local",
+  usernameField = "email",
+  passwordField = "password"
+) {
   // Use local strategy
   passport.use(
+    passportName,
     new LocalStrategy(
       {
-        usernameField: "email",
-        passwordField: "password",
+        usernameField,
+        passwordField,
         passReqToCallback: true,
       },
       async (req, email, password, done) => {

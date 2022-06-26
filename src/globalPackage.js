@@ -3,6 +3,7 @@
  */
 global.express = require("express");
 global.app = express();
+global.httpServer = require("http").createServer(app);
 global.router = express.Router();
 global.axios = require("axios");
 global.createError = require("http-errors");
@@ -31,3 +32,5 @@ global.sentry = require("@sentry/node");
 global.useragent = require("useragent");
 global.jwtDecode = require("jwt-decode");
 global.moment = require("moment");
+global.apolloServerExpress = require("apollo-server-express");
+global.apolloServerCore = require("apollo-server-core");

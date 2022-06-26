@@ -199,6 +199,8 @@ for (let validatorFile of files) {
 var text = `declare global {
   var express: typeof import("express");
   var app: ReturnType<typeof express>;
+  const httpModule: typeof import("http");
+  var httpServer = ReturnType<typeof httpModule.createServer>;
   var router: ReturnType<typeof express.Router>;
   var createError: typeof import("http-errors");
   var cookieParser: typeof import("cookie-parser");
@@ -221,6 +223,8 @@ var text = `declare global {
   var util: typeof import("util");
   var Sequelize: typeof import("sequelize");
   var Op: typeof import("sequelize").Op;
+  var apolloServerExpress: typeof import("apollo-server-express");
+  var apolloServerCore: typeof import("apollo-server-core");
   
   //MIDDLEWARES
   var middlewares: ${convertToCode(types.middlewares)};
