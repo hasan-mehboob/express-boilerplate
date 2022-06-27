@@ -1,6 +1,6 @@
 // Allows middleware chaining just like express with a custom
 // `next()` function (because graphql doesn't come with one)
-module.exports = function grapqhlChain(...middlewares) {
+module.exports = function graphqlChain(...middlewares) {
   return async (root, args, context = {}, info) => {
     const { req, res } = context;
     let counter = 0;
