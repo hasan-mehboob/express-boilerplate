@@ -8,7 +8,8 @@ module.exports = function () {
   opts.jwtFromRequest = function (request) {
     if (request.cookies.accessToken)
       request.jwtToken = request.cookies.accessToken;
-    return request.cookies.accessToken;
+    if (request.headers.token) request.jwtToken = request.headers.token;
+    return request.jwtToken;
   };
 
   passport.use(
@@ -19,7 +20,8 @@ module.exports = function () {
             done({ status: 401, message: messages.invalidToken }, null);
           });
         } else {
-          const refreshToken = req.cookies.refreshToken;
+          const refreshToken =
+            req.cookies.refreshtoken ?? req.headers.refreshtoken;
           if (!refreshToken)
             done(
               { status: 404, message: messages.notFound("Refresh Token") },

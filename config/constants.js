@@ -22,6 +22,11 @@ const constants = {
     USER: "Users",
     ADMIN: "Admins",
   },
+  GRAPHQL_PATH: "/graphql",
+  PUBLIC_GRAPHQL_ROUTES: {
+    Query: [],
+    Mutation: ["login", "signup"],
+  },
 };
 module.exports = constants;
 

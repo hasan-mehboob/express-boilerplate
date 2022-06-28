@@ -1,0 +1,22 @@
+type User {
+  id: ID!
+  firstName: String
+  fullName: String
+  lastName: String
+  gender: String
+  email: String
+  accessToken: String
+  refreshToken: String
+}
+enum UserType {
+  USER
+  ADMIN
+}
+
+type Query {
+  getProfile(id: ID): User
+}
+type Mutation {
+  login(email: String!, password: String!, as: UserType!): User
+  signup(email: String!, password: String!): User
+}
